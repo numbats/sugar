@@ -29,14 +29,63 @@ sheet <- tryCatch({
 })
 
 
+lecdf <- read_sheet(lec, skip = 1)
+lecn <- lecdf[-1, ]
+studentidlist <- lecn %>%
+  dplyr::select(Lecture)
+
+tutpatdf <- read_sheet(lec, sheet = 2, skip = 1)
+tutpatn <- tutpatdf[-1, ]
+
+pat_list <- tutpatn %>%
+  select("Tutorial A") %>%
+  rename(student_id = "Tutorial A") %>%
+  mutate(tutorial = "A")
 
 
-header <- dashboardHeader(title = "AG checker",  googleAuthUI("gauth_login"))
+tutsherdf <- read_sheet(lec, sheet = 3, skip = 1)
+tutshern <- tutsherdf[-1, ]
+
+sher_list <- tutshern %>%
+  select("Tutorial B") %>%
+  rename(student_id = "Tutorial B") %>%
+  mutate(tutorial = "B")
+
+tut_student_list <- bind_rows(pat_list, sher_list)
+
+
+header <- dashboardHeader(title = "SUGAR",  googleAuthUI("gauth_login"))
 
 sidebar <- dashboardSidebar(uiOutput("sidebarpanel"))
 body <- dashboardBody(shinyjs::useShinyjs(), uiOutput("body"))
 ui <- dashboardPage(header, sidebar, body, skin = "blue")
 
+loginpage <- div(
+  id = "loginpage", style = "width: 500px; max-width: 100%; margin: 0 auto; padding: 20px;",
+  wellPanel(
+    tags$h2("LOG IN", class = "text-center", style = "padding-top: 0;color:#333; font-weight:600;"),
+    textInput("studentid", placeholder = "studentid", label = tagList(icon("user"), "Student ID")),
+
+    br(),
+    div(
+      style = "text-align: center;",
+      actionButton("login", "SIGN IN", style = "color: white; background-color:#3c8dbc;
+                                  padding: 10px 15px; width: 150px; cursor: pointer;
+                                 font-size: 18px; font-weight: 600;"),
+      shinyjs::hidden(
+        div(
+          id = "nomatch",
+          tags$p("Oops! Incorrect username!",
+                 style = "color: red; font-weight: 600;
+                                            padding-top: 5px;font-size:16px;",
+                 class = "text-center"
+          )
+        )
+      ),
+      br()
+    )
+  )
+)
 
 
 server <- function(input, output, session) {
@@ -51,10 +100,15 @@ server <- function(input, output, session) {
                             logout_class = "btn btn-primary")
 
   userDetails <- reactive({
-    validate(
-      need(accessToken(),"")
-    )
-    USER$login <- TRUE
+
+    if(is.null(accessToken())== FALSE)
+    {
+      # validate(
+      #   need(accessToken(),"")
+      # )
+      USER$login <- TRUE
+    }
+    else loginpage
 
   })
 
@@ -62,7 +116,7 @@ server <- function(input, output, session) {
   output$sidebarpanel <- renderUI({
 
     validate(
-      need(userDetails(), "getting user details")
+      need(userDetails(), "")
     )
     sidebarMenu(
       menuItem("Attendance", tabName = "dashboard", icon = icon("fas fa-bell")),
@@ -71,37 +125,43 @@ server <- function(input, output, session) {
 
   })
 
+
   output$body <- renderUI({
-    validate(
-      need(userDetails(), "getting user details")
-    )
-    tabItems(
+    if(is.null(accessToken())== FALSE)
+    {
+      tabItems(
 
-      # First tab
-      tabItem(
-        tabName = "dashboard", class = "active",
-        fluidRow(
-          br(),
-          selectInput(
-            "type",
-            "Select class",
-            c("Lecture", "Tutorial"),
-            selected = NULL
-          ),
-          box(width = 12, dataTableOutput("results"))
-        )
-      ),
+        # First tab
+        tabItem(
+          tabName = "dashboard", class = "active",
+          fluidRow(
+            br(),
+            selectInput(
+              "type",
+              "Select class",
+              c("Lecture", "Tutorial"),
+              selected = NULL
+            ),
+            box(width = 12, dataTableOutput("results"))
+          )
+        ),
 
-      # Second tab
-      tabItem(
-        tabName = "second",
-        fluidRow(
-          box(width = 12, dataTableOutput("results2"))
+        # Second tab
+        tabItem(
+          tabName = "second",
+          fluidRow(
+            box(width = 12, dataTableOutput("results2"))
+          )
         )
       )
-    )
 
-  })
+    }
+
+    else
+      loginpage
+
+  }
+  )
 
   output$results <- DT::renderDataTable({
     datatable(lecn %>%
