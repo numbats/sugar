@@ -1,4 +1,5 @@
 library(shiny)
+#library(semantic.dashboard)
 library(shinydashboard)
 library(DT)
 library(shinyWidgets)
@@ -54,11 +55,12 @@ sher_list <- tutshern %>%
 tut_student_list <- bind_rows(pat_list, sher_list)
 
 
-header <- dashboardHeader(title = "SUGAR",googleAuthUI("gauth_login"))
+header <- dashboardHeader(title = "SUGAR")
 
 sidebar <- dashboardSidebar(shinyjs::useShinyjs(),uiOutput("sidebarpanel"))
 body <- dashboardBody(shinyjs::useShinyjs(), uiOutput("body"))
-ui <- dashboardPage(header,sidebar, body,skin = "purple")
+ui <- dashboardPage(header,sidebar,body,skin ="purple")
+
 
 
 server <- function(input, output, session) {
@@ -69,6 +71,8 @@ server <- function(input, output, session) {
 
   ## Authentication
   accessToken <- callModule(googleAuth, "gauth_login",
+                            login_text = "Sign in via Google",
+                            logout_text="Sign Out",
                             login_class = "btn btn-success",
                             logout_class = "btn btn-success")
 
@@ -88,8 +92,11 @@ server <- function(input, output, session) {
     {
 
     sidebarMenu(
+
+      menuItem("Student",tabName = "student",icon = icon("fas fa-user")),
       menuItem("Attendance", tabName = "dashboard", icon = icon("fas fa-bell")),
-      menuItem("Grade", tabName = "second", icon = icon("fas fa-book-open"))
+      menuItem("Grade", tabName = "second", icon = icon("fas fa-book-open")),
+      googleAuthUI("gauth_login")
     )
     }
      else
@@ -97,7 +104,14 @@ server <- function(input, output, session) {
 
 
   })
-
+    output$picture<- renderImage({
+      return(list(
+        src = "www/monash-logoar5.png",
+        contentType = "image/png",
+        width = 420,
+        height = 200
+      ))
+    }, deleteFile = FALSE)
 
   output$body <- renderUI({
     if(is.null(accessToken())== FALSE)
@@ -132,17 +146,17 @@ server <- function(input, output, session) {
 
     else
       fluidRow(
-        setBackgroundImage(src = sample("https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=715&q=80"), shinydashboard = TRUE),
-
+        setBackgroundImage(src = "https://media2.giphy.com/media/dAWZiSMbMvObDWP3aA/giphy.gif?cid=790b76112ebc2cd4920e9b8eee5c21b875d80efb65eac044&rid=giphy.gif&ct=g", shinydashboard = TRUE),
+br(),
+br(),
           h2("Welcome to Sugar !", style = "text-align:center;color:white;"),
           h3("Shiny Unit Grade and Attendance Reviewer", style = "text-align:center;color:white;"),
           br(),
-          p("Shiny Unit Grade and Attendance Reviewer, or SUGAR, is a shiny web app that allows students to see their grade and attendance of a unit. Please Sign in via Google",
-            style = "text-align:center;color:white;padding:50px;border-radius:20px"
-          ),
-
-          br()
-
+          column(12,align="center",imageOutput("picture",width="100%",height="200px")),
+          p("Shiny Unit Grade and Attendance Reviewer, or SUGAR,
+            is a shiny web app that allows students to see their grade and attendance of a unit", style = "text-align:center;color:white;"),
+br(),
+       column(12,googleAuthUI("gauth_login"),align="center")
 
 
 )
