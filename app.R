@@ -54,38 +54,11 @@ sher_list <- tutshern %>%
 tut_student_list <- bind_rows(pat_list, sher_list)
 
 
-header <- dashboardHeader(title = "SUGAR",  googleAuthUI("gauth_login"))
+header <- dashboardHeader(title = "SUGAR",googleAuthUI("gauth_login"))
 
-sidebar <- dashboardSidebar(uiOutput("sidebarpanel"))
+sidebar <- dashboardSidebar(shinyjs::useShinyjs(),uiOutput("sidebarpanel"))
 body <- dashboardBody(shinyjs::useShinyjs(), uiOutput("body"))
-ui <- dashboardPage(header, sidebar, body, skin = "blue")
-
-loginpage <- div(
-  id = "loginpage", style = "width: 500px; max-width: 100%; margin: 0 auto; padding: 20px;",
-  wellPanel(
-    tags$h2("LOG IN", class = "text-center", style = "padding-top: 0;color:#333; font-weight:600;"),
-    textInput("studentid", placeholder = "studentid", label = tagList(icon("user"), "Student ID")),
-
-    br(),
-    div(
-      style = "text-align: center;",
-      actionButton("login", "SIGN IN", style = "color: white; background-color:#3c8dbc;
-                                  padding: 10px 15px; width: 150px; cursor: pointer;
-                                 font-size: 18px; font-weight: 600;"),
-      shinyjs::hidden(
-        div(
-          id = "nomatch",
-          tags$p("Oops! Incorrect username!",
-                 style = "color: red; font-weight: 600;
-                                            padding-top: 5px;font-size:16px;",
-                 class = "text-center"
-          )
-        )
-      ),
-      br()
-    )
-  )
-)
+ui <- dashboardPage(header,sidebar, body,skin = "purple")
 
 
 server <- function(input, output, session) {
@@ -96,16 +69,13 @@ server <- function(input, output, session) {
 
   ## Authentication
   accessToken <- callModule(googleAuth, "gauth_login",
-                            login_class = "btn btn-primary",
-                            logout_class = "btn btn-primary")
+                            login_class = "btn btn-success",
+                            logout_class = "btn btn-success")
 
   userDetails <- reactive({
 
     if(is.null(accessToken())== FALSE)
     {
-      # validate(
-      #   need(accessToken(),"")
-      # )
       USER$login <- TRUE
     }
     else loginpage
@@ -114,14 +84,17 @@ server <- function(input, output, session) {
 
 
   output$sidebarpanel <- renderUI({
+    if(is.null(accessToken())== FALSE)
+    {
 
-    validate(
-      need(userDetails(), "")
-    )
     sidebarMenu(
       menuItem("Attendance", tabName = "dashboard", icon = icon("fas fa-bell")),
       menuItem("Grade", tabName = "second", icon = icon("fas fa-book-open"))
     )
+    }
+     else
+       addClass(selector = "body", class = "sidebar-collapse")
+
 
   })
 
@@ -158,7 +131,21 @@ server <- function(input, output, session) {
     }
 
     else
-      loginpage
+      fluidRow(
+        setBackgroundImage(src = sample("https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=715&q=80"), shinydashboard = TRUE),
+
+          h2("Welcome to Sugar !", style = "text-align:center;color:white;"),
+          h3("Shiny Unit Grade and Attendance Reviewer", style = "text-align:center;color:white;"),
+          br(),
+          p("Shiny Unit Grade and Attendance Reviewer, or SUGAR, is a shiny web app that allows students to see their grade and attendance of a unit. Please Sign in via Google",
+            style = "text-align:center;color:white;padding:50px;border-radius:20px"
+          ),
+
+          br()
+
+
+
+)
 
   }
   )
