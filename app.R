@@ -7,17 +7,36 @@ library(shinyjs)
 library(googlesheets4)
 library(tidyverse)
 library(googleAuthR)
-library(googleID)
+
 # cred
 
-options(googleAuthR.scopes.selected = c("https://www.googleapis.com/auth/userinfo.email",
-                                        "https://www.googleapis.com/auth/userinfo.profile"))
-options("googleAuthR.webapp.client_id" = "316001170774-dl9b831srbr2qtjaga85vrlcmjj65jqq.apps.googleusercontent.com")
-options("googleAuthR.webapp.client_secret" = "K7reQm34Pla-9DjEhPjSPL88")
+# options(googleAuthR.scopes.selected =
+#   c( "https://www.googleapis.com/auth/userinfo.email",
+#    "https://www.googleapis.com/auth/userinfo.profile"))
+
+# options(googleAuthR.scopes.selected = c("https://www.googleapis.com/auth/userinfo.email",
+#
+#                                         "https://www.googleapis.com/auth/userinfo.profile"))
+
+options("googleAuthR.scopes.selected" = "email")
+
+ options("googleAuthR.webapp.client_id" = "1044705167382-idbbqfmpian2ea30gmdc2alktbt133ou.apps.googleusercontent.com")
+  options("googleAuthR.webapp.client_secret" = "1EvRhB6JovB_fxON8cuKx6lz")
+
+
+get_email <- function(){
+  e_id<-  gar_api_generator(
+    #"https://www.googleapis.com/auth/userinfo.email",
+    "https://openidconnect.googleapis.com/v1/userinfo",
+                         "POST",
+                         data_parse_function = function(x) x$email,
+                         checkTrailingSlash = FALSE)
+e_id()
+}
 
 
 sheet <- tryCatch({
-  ## survey answers
+
   gs4_auth(
     cache = ".secrets",
     email = "abab0012@student.monash.edu",
@@ -76,7 +95,7 @@ server <- function(input, output, session) {
                             login_class = "btn btn-success",
                             logout_class = "btn btn-success")
 
-  userDetails <- reactive({
+  logged <- reactive({
 
     if(is.null(accessToken())== FALSE)
     {
@@ -94,8 +113,8 @@ server <- function(input, output, session) {
     sidebarMenu(
 
       menuItem("Student",tabName = "student",icon = icon("fas fa-user")),
-      menuItem("Attendance", tabName = "dashboard", icon = icon("fas fa-bell")),
-      menuItem("Grade", tabName = "second", icon = icon("fas fa-book-open")),
+      menuItem("Attendance", tabName = "attendance", icon = icon("fas fa-bell")),
+      menuItem("Grade", tabName = "grade", icon = icon("fas fa-book-open")),
       googleAuthUI("gauth_login")
     )
     }
@@ -118,9 +137,20 @@ server <- function(input, output, session) {
     {
       tabItems(
 
+
         # First tab
         tabItem(
-          tabName = "dashboard", class = "active",
+          tabName = "student", class = "active",
+          fluidRow(
+            br(),
+            p("Logged in as: ", textOutput("user_name"))
+
+          )
+        ),
+
+        # second tab
+        tabItem(
+          tabName = "attendance", class = "active",
           fluidRow(
             br(),
             selectInput(
@@ -133,9 +163,9 @@ server <- function(input, output, session) {
           )
         ),
 
-        # Second tab
+        # third tab
         tabItem(
-          tabName = "second",
+          tabName = "grade",
           fluidRow(
             box(width = 12, dataTableOutput("results2"))
           )
@@ -164,6 +194,25 @@ br(),
   }
   )
 
+  userDetails <- reactive({
+    validate(
+      need(accessToken(), "")
+    )
+
+    with_shiny(get_email(), shiny_access_token = accessToken())
+  })
+
+
+output$user_name <- renderText({
+  validate(
+    need(userDetails(), "")
+  )
+
+em <- get_email()
+str(em)
+})
+
+
   output$results <- DT::renderDataTable({
     datatable(lecn %>%
                 filter(Lecture == "s123"), options = list(
@@ -191,6 +240,6 @@ br(),
 
 }
 
-runApp(list(ui = ui, server = server))
+runApp(list(ui = ui, server = server),port=4549)
 
 
