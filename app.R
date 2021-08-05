@@ -10,28 +10,22 @@ library(googleAuthR)
 
 # cred
 
-# options(googleAuthR.scopes.selected =
-#   c( "https://www.googleapis.com/auth/userinfo.email",
-#    "https://www.googleapis.com/auth/userinfo.profile"))
+options(googleAuthR.scopes.selected = c("https://www.googleapis.com/auth/userinfo.email",
 
-# options(googleAuthR.scopes.selected = c("https://www.googleapis.com/auth/userinfo.email",
-#
-#                                         "https://www.googleapis.com/auth/userinfo.profile"))
+                                        "https://www.googleapis.com/auth/userinfo.profile"))
 
-options("googleAuthR.scopes.selected" = "email")
 
- options("googleAuthR.webapp.client_id" = "1044705167382-idbbqfmpian2ea30gmdc2alktbt133ou.apps.googleusercontent.com")
-  options("googleAuthR.webapp.client_secret" = "1EvRhB6JovB_fxON8cuKx6lz")
-
+options("googleAuthR.webapp.client_id" = "1044705167382-idbbqfmpian2ea30gmdc2alktbt133ou.apps.googleusercontent.com")
+options("googleAuthR.webapp.client_secret" = "1EvRhB6JovB_fxON8cuKx6lz")
 
 get_email <- function(){
-  e_id<-  gar_api_generator(
+  f<-  gar_api_generator(
     #"https://www.googleapis.com/auth/userinfo.email",
     "https://openidconnect.googleapis.com/v1/userinfo",
                          "POST",
                          data_parse_function = function(x) x$email,
                          checkTrailingSlash = FALSE)
-e_id()
+f()
 }
 
 
@@ -198,18 +192,18 @@ br(),
     validate(
       need(accessToken(), "")
     )
-
-    with_shiny(get_email(), shiny_access_token = accessToken())
+    USER$login <- TRUE
+    with_shiny(get_email, shiny_access_token = accessToken())
   })
 
 
 output$user_name <- renderText({
+
   validate(
     need(userDetails(), "")
   )
 
-em <- get_email()
-str(em)
+  userDetails()
 })
 
 
@@ -232,7 +226,7 @@ str(em)
   observe({
     if (USER$login) {
       shinyjs::onclick("gauth_login-googleAuthUi",
-                       shinyjs::runjs("window.location.href = 'http://127.0.0.1:4560';"))
+                       shinyjs::runjs("window.location.href = 'http://127.0.0.1:4549';"))
     }
   })
 

@@ -1,5 +1,5 @@
 library(googlesheets4)
-
+library(googleAuthR)
 # designate project-specific cache
 options(gargle_oauth_cache = ".secrets")
 
@@ -27,4 +27,10 @@ gs4_auth(
 
 saveRDS(gs4_auth(), "authentication.rds")
 
+# gar_auth_configure(path="client.json")
+# gar_auth(cache = ".httr-oauth",
+#          email = "aarathy.babu@monash.edu",
+#          scopes = c("https://www.googleapis.com/auth/userinfo.email",
+#                     "https://www.googleapis.com/auth/userinfo.profile"))
+# saveRDS(gar_auth(), "garauth.rds")
 
