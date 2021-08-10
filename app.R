@@ -227,7 +227,7 @@ server <- function(input, output, session) {
           tabName = "student", class = "active",
           fluidRow(
             br(),
-            p("Logged in as: ", textOutput("user_name"))
+            p("Welcome ! ", textOutput("user_name"))
           )
         ),
 
@@ -242,7 +242,10 @@ server <- function(input, output, session) {
               c("Lecture", "Tutorial"),
               selected = NULL
             ),
-            box(width = 12, dataTableOutput("results")),
+            column(12,align = "center",valueBoxOutput("present",width = 2),
+            valueBoxOutput("absent",width = 2),
+            valueBoxOutput("excused",width = 2),
+            valueBoxOutput("unexcused",width = 2)),
             column(12,
               align = "center",
               fullcalendarOutput("calendar", width = "50%", height = "50%")
@@ -292,20 +295,128 @@ server <- function(input, output, session) {
     userDetails()
   })
 
+  output$present <- renderValueBox({
 
-  output$results <- DT::renderDataTable({
     if (input$type == "Lecture") {
-      datatable(pivot %>%
-        filter(email == as.character(userDetails())))
-    } else {
-      if (as.character(userDetails()) %in% tutpatn$email) {
-        datatable(tutpatn %>%
-          filter(email == as.character(userDetails())))
-      } else {
-        datatable(tutshern %>%
-          filter(email == as.character(userDetails())))
-      }
+    presentnum <-  pivot %>%
+        filter(email == as.character(userDetails()))%>%
+        pull(Present)
+
     }
+
+      else {
+        if (as.character(userDetails()) %in% tutpatn$email) {
+          presentnum <-  tutpatn%>%
+            filter(email == as.character(userDetails()))%>%
+            pull(Present)
+        } else {
+          presentnum <-  tutshern %>%
+            filter(email == as.character(userDetails()))%>%
+            pull(Present)
+        }
+      }
+
+    valueBox(
+      paste0(presentnum), "Present", icon = icon("list"),
+      color = "purple"
+    )
+  })
+
+#
+#   output$results <- DT::renderDataTable({
+#     if (input$type == "Lecture") {
+#       datatable(pivot %>%
+#         filter(email == as.character(userDetails())))
+#     } else {
+#       if (as.character(userDetails()) %in% tutpatn$email) {
+#         datatable(tutpatn %>%
+#           filter(email == as.character(userDetails())))
+#       } else {
+#         datatable(tutshern %>%
+#           filter(email == as.character(userDetails())))
+#       }
+#     }
+#   })
+
+
+  output$absent <- renderValueBox({
+
+    if (input$type == "Lecture") {
+      absentnum <-  pivot %>%
+        filter(email == as.character(userDetails()))%>%
+        pull(`Away for portion`)
+
+    }
+
+      else {
+        if (as.character(userDetails()) %in% tutpatn$email) {
+          absentnum <-  tutpatn %>%
+            filter(email == as.character(userDetails()))%>%
+            pull(`Away for portion`)
+        } else {
+          absentnum <-  tutshern %>%
+            filter(email == as.character(userDetails()))%>%
+            pull(`Away for portion`)
+        }
+      }
+
+    valueBox(
+      paste0(absentnum), "Absent", icon = icon("list"),
+      color = "yellow"
+    )
+  })
+
+  output$excused <- renderValueBox({
+
+    if (input$type == "Lecture") {
+      excusednum <-  pivot %>%
+        filter(email == as.character(userDetails()))%>%
+        pull(`Excused absence`)
+
+    }
+
+      else {
+        if (as.character(userDetails()) %in% tutpatn$email) {
+          excusednum <-  tutpatn %>%
+            filter(email == as.character(userDetails()))%>%
+            pull(`Excused absence`)
+        } else {
+          excusednum <-  tutshern%>%
+            filter(email == as.character(userDetails()))%>%
+            pull(`Excused absence`)
+        }
+      }
+
+    valueBox(
+      paste0(excusednum), "Excused Absence", icon = icon("list"),
+      color = "aqua"
+    )
+  })
+
+  output$unexcused <- renderValueBox({
+
+    if (input$type == "Lecture") {
+      unexcusednum <-  pivot %>%
+        filter(email == as.character(userDetails()))%>%
+        pull(`Unexcused absence`)
+
+    }
+       else {
+        if (as.character(userDetails()) %in% tutpatn$email) {
+          unexcusednum <-  tutpatn %>%
+            filter(email == as.character(userDetails()))%>%
+            pull(`Unexcused absence`)
+        } else {
+          unexcusednum <- tutshern %>%
+            filter(email == as.character(userDetails()))%>%
+            pull(`Unexcused absence`)
+        }
+      }
+
+    valueBox(
+      paste0(unexcusednum), "Unexcused Absence", icon = icon("list"),
+      color = "purple"
+    )
   })
 
   output$results2 <- DT::renderDataTable({
