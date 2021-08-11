@@ -183,7 +183,7 @@ header <- dashboardHeader(title = "SUGAR")
 
 sidebar <- dashboardSidebar(shinyjs::useShinyjs(), uiOutput("sidebarpanel"))
 body <- dashboardBody(shinyjs::useShinyjs(), uiOutput("body"))
-ui <- dashboardPage(header, sidebar, body, skin = "purple")
+ui <- dashboardPage(header, sidebar, body, skin = "blue")
 
 # first tab
 first_tab <- tabItem(
@@ -239,18 +239,18 @@ staff_first_tab <-  tabItem(
 )
 
 landing_page <- fluidRow(
-  setBackgroundImage(src =
-                       # "https://ohgm.co.uk/wp-content/uploads/2015/09/500x500-hor.gif"
-                       "https://media2.giphy.com/media/dAWZiSMbMvObDWP3aA/giphy.gif?cid=790b76112ebc2cd4920e9b8eee5c21b875d80efb65eac044&rid=giphy.gif&ct=g"
-                     , shinydashboard = TRUE),
+  # setBackgroundImage(src ="https://www.colorhexa.com/006dae.png"
+  #                      # "https://ohgm.co.uk/wp-content/uploads/2015/09/500x500-hor.gif"
+  #                     # "https://media2.giphy.com/media/dAWZiSMbMvObDWP3aA/giphy.gif?cid=790b76112ebc2cd4920e9b8eee5c21b875d80efb65eac044&rid=giphy.gif&ct=g"
+  #                    , shinydashboard = TRUE),
   br(),
   br(),
-  h2("Welcome to Sugar !", style = "text-align:center;color:white;"),
-  h3("Shiny Unit Grade and Attendance Reviewer", style = "text-align:center;color:white;"),
+  h2("Welcome to Sugar !", style = "text-align:center;color:black;"),
+  h3("Shiny Unit Grade and Attendance Reviewer", style = "text-align:center;color:black;"),
   br(),
-  column(12, align = "center", imageOutput("picture", width = "100%", height = "200px")),
+  column(12, align = "center", imageOutput("picture", width = "100%", height = "230px")),
   p("Shiny Unit Grade and Attendance Reviewer, or SUGAR,
-            is a shiny web app that allows students to see their grade and attendance of a unit", style = "text-align:center;color:white;"),
+            is a shiny web app that allows students to see their grade and attendance of a unit", style = "text-align:center;color:black;"),
   br(),
   column(12, googleAuthUI("gauth_login"), align = "center")
 )
@@ -262,14 +262,24 @@ authorised_list <- as.tibble(c(pivot$email,"aarathy.babu@monash.edu"))
 ## error page
 
 error_page <- fluidRow(
-  setBackgroundImage(src =
-                       # "https://ohgm.co.uk/wp-content/uploads/2015/09/500x500-hor.gif"
-                       "https://media2.giphy.com/media/dAWZiSMbMvObDWP3aA/giphy.gif?cid=790b76112ebc2cd4920e9b8eee5c21b875d80efb65eac044&rid=giphy.gif&ct=g"
-                     , shinydashboard = TRUE),
+  # setBackgroundImage(src ="https://www.colorhexa.com/006dae.png"
+  #                      # "https://ohgm.co.uk/wp-content/uploads/2015/09/500x500-hor.gif"
+  #                      #"https://media2.giphy.com/media/dAWZiSMbMvObDWP3aA/giphy.gif?cid=790b76112ebc2cd4920e9b8eee5c21b875d80efb65eac044&rid=giphy.gif&ct=g"
+  #                    , shinydashboard = TRUE),
   br(),
   br(),
-  h3("Unauthorized Access", style = "text-align:center;color:white;"),
+  h3("Unauthorized Access", style = "text-align:center;color:black;"),
+  column(12, actionBttn(
+    inputId = "back",
+    label = "Go back to home page",
+    color = "success",
+    style = "simple",
+    block = FALSE
+  ),
+        # actionButton("back", "Go back to home page"),
+  align = "center"),
   br())
+
 
 server <- function(input, output, session) {
 
@@ -322,7 +332,7 @@ server <- function(input, output, session) {
     {
     #  monash::logo_get(path="www/",color = "black")
       return(list(
-        src = "www/monash-stacked-reversed-white.png",
+        src = "www/blc.png",
         contentType = "image/png",
         width = 420,
         height = 200
@@ -535,6 +545,14 @@ if((is.element(as.character(userDetails()), authorised_list$value)==TRUE)){
       )
     }
   })
+  observeEvent(input$back, {
+    shinyjs::onclick(
+      "back",
+      shinyjs::runjs("window.location.href = 'http://127.0.0.1:4549';")
+    )
+  })
+
+
 }
 
 runApp(list(ui = ui, server = server),launch.browser=TRUE, port = 4549)
