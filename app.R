@@ -7,6 +7,7 @@ library(shinyjs)
 library(googlesheets4)
 library(tidyverse)
 library(googleAuthR)
+library(monash)
 
 # google credentials & scopes
 
@@ -28,6 +29,20 @@ get_email <- function() {
     "https://openidconnect.googleapis.com/v1/userinfo",
     "POST",
     data_parse_function = function(x) x$email,
+    checkTrailingSlash = FALSE
+  )
+  f()
+}
+
+
+# Get hd
+
+get_hd <- function() {
+  f <- gar_api_generator(
+    # "https://www.googleapis.com/auth/userinfo.email",
+    "https://openidconnect.googleapis.com/v1/userinfo",
+    "POST",
+    data_parse_function = function(x) x$hd,
     checkTrailingSlash = FALSE
   )
   f()
@@ -161,6 +176,7 @@ data <- data.frame(
   color = c("red", "blue", "green")
 )
 
+
 # Dashboard ui & server
 
 header <- dashboardHeader(title = "SUGAR")
@@ -169,7 +185,68 @@ sidebar <- dashboardSidebar(shinyjs::useShinyjs(), uiOutput("sidebarpanel"))
 body <- dashboardBody(shinyjs::useShinyjs(), uiOutput("body"))
 ui <- dashboardPage(header, sidebar, body, skin = "purple")
 
+# first tab
+first_tab <- tabItem(
+  tabName = "attendance", class = "active",
+  fluidRow(
+    br(),
+    p("Welcome ! ", textOutput("user_name")),
+    selectInput(
+      "type",
+      "Select class",
+      c("Lecture", "Tutorial"),
+      selected = NULL
+    ),
+    valueBoxOutput("present",width = 3),
+    valueBoxOutput("absent",width = 3),
+    valueBoxOutput("excused",width = 3),
+    valueBoxOutput("unexcused",width = 3),
+    box(width = 12, dataTableOutput("results")),
+    column(12,
+           align = "center",
+           fullcalendarOutput("calendar", width = "50%", height = "50%")
+    )
+  )
+)
 
+second_tab <- tabItem(
+  tabName = "grade",
+  fluidRow(
+    box(width = 12, dataTableOutput("results2"))
+  )
+)
+
+staff_first_tab <-  tabItem(
+  tabName = "attendance", class = "active",
+  fluidRow(
+    br(),
+    p("Welcome ! ", textOutput("user_name")),
+    selectInput(
+      "type",
+      "Select class",
+      c("Lecture", "Tutorial A","Tutorial B"),
+      selected = NULL
+    ),
+    box(width = 12, dataTableOutput("results"))
+  )
+)
+
+landing_page <- fluidRow(
+  setBackgroundImage(src =
+                       # "https://ohgm.co.uk/wp-content/uploads/2015/09/500x500-hor.gif"
+                       "https://media2.giphy.com/media/dAWZiSMbMvObDWP3aA/giphy.gif?cid=790b76112ebc2cd4920e9b8eee5c21b875d80efb65eac044&rid=giphy.gif&ct=g"
+                     , shinydashboard = TRUE),
+  br(),
+  br(),
+  h2("Welcome to Sugar !", style = "text-align:center;color:white;"),
+  h3("Shiny Unit Grade and Attendance Reviewer", style = "text-align:center;color:white;"),
+  br(),
+  column(12, align = "center", imageOutput("picture", width = "100%", height = "200px")),
+  p("Shiny Unit Grade and Attendance Reviewer, or SUGAR,
+            is a shiny web app that allows students to see their grade and attendance of a unit", style = "text-align:center;color:white;"),
+  br(),
+  column(12, googleAuthUI("gauth_login"), align = "center")
+)
 
 server <- function(input, output, session) {
   login <- FALSE
@@ -196,7 +273,7 @@ server <- function(input, output, session) {
   output$sidebarpanel <- renderUI({
     if (is.null(accessToken()) == FALSE) {
       sidebarMenu(
-        menuItem("Student", tabName = "student", icon = icon("fas fa-user")),
+       # menuItem("Student", tabName = "student", icon = icon("fas fa-user")),
         menuItem("Attendance", tabName = "attendance", icon = icon("fas fa-bell")),
         menuItem("Grade", tabName = "grade", icon = icon("fas fa-book-open")),
         googleAuthUI("gauth_login")
@@ -207,8 +284,9 @@ server <- function(input, output, session) {
   })
   output$picture <- renderImage(
     {
+    #  monash::logo_get(path="www/",color = "black")
       return(list(
-        src = "www/monash-logoar5.png",
+        src = "www/monash-stacked-reversed-white.png",
         contentType = "image/png",
         width = 420,
         height = 200
@@ -217,65 +295,54 @@ server <- function(input, output, session) {
     deleteFile = FALSE
   )
 
+
+  userhd <- reactive({
+    validate(
+      need(accessToken(), "")
+    )
+
+    with_shiny(get_hd, shiny_access_token = accessToken())
+  })
+
+
   output$body <- renderUI({
-    if (is.null(accessToken()) == FALSE) {
+
+if (is.null(accessToken()) == FALSE) {
+
+      if(as.character(userhd())=="student.monash.edu")
+        {
       tabItems(
-
-
-        # First tab
-        tabItem(
-          tabName = "student", class = "active",
-          fluidRow(
-            br(),
-            p("Welcome ! ", textOutput("user_name"))
-          )
-        ),
+        # # student tab
+        # tabItem(
+        #   tabName = "student", class = "active",
+        #   fluidRow(
+        #     br(),
+        #     p("Welcome ! ", textOutput("user_name"))
+        #   )
+        # ),
+        # first tab
+        first_tab,
 
         # second tab
-        tabItem(
-          tabName = "attendance", class = "active",
-          fluidRow(
-            br(),
-            selectInput(
-              "type",
-              "Select class",
-              c("Lecture", "Tutorial"),
-              selected = NULL
-            ),
-            column(12,align = "center",valueBoxOutput("present",width = 2),
-            valueBoxOutput("absent",width = 2),
-            valueBoxOutput("excused",width = 2),
-            valueBoxOutput("unexcused",width = 2)),
-            column(12,
-              align = "center",
-              fullcalendarOutput("calendar", width = "50%", height = "50%")
-            )
-          )
-        ),
-
-        # third tab
-        tabItem(
-          tabName = "grade",
-          fluidRow(
-            box(width = 12, dataTableOutput("results2"))
-          )
-        )
-      )
-    } else {
-      fluidRow(
-        setBackgroundImage(src = "https://media2.giphy.com/media/dAWZiSMbMvObDWP3aA/giphy.gif?cid=790b76112ebc2cd4920e9b8eee5c21b875d80efb65eac044&rid=giphy.gif&ct=g", shinydashboard = TRUE),
-        br(),
-        br(),
-        h2("Welcome to Sugar !", style = "text-align:center;color:white;"),
-        h3("Shiny Unit Grade and Attendance Reviewer", style = "text-align:center;color:white;"),
-        br(),
-        column(12, align = "center", imageOutput("picture", width = "100%", height = "200px")),
-        p("Shiny Unit Grade and Attendance Reviewer, or SUGAR,
-            is a shiny web app that allows students to see their grade and attendance of a unit", style = "text-align:center;color:white;"),
-        br(),
-        column(12, googleAuthUI("gauth_login"), align = "center")
+        second_tab
       )
     }
+
+    else {
+
+      tabItems(
+        # first tab
+        staff_first_tab,
+
+        # second tab
+
+        second_tab
+      )
+
+  }
+
+  }
+    else {landing_page}
   })
 
   userDetails <- reactive({
@@ -294,6 +361,8 @@ server <- function(input, output, session) {
 
     userDetails()
   })
+
+
 
   output$present <- renderValueBox({
 
@@ -322,21 +391,20 @@ server <- function(input, output, session) {
     )
   })
 
-#
-#   output$results <- DT::renderDataTable({
-#     if (input$type == "Lecture") {
-#       datatable(pivot %>%
-#         filter(email == as.character(userDetails())))
-#     } else {
-#       if (as.character(userDetails()) %in% tutpatn$email) {
-#         datatable(tutpatn %>%
-#           filter(email == as.character(userDetails())))
-#       } else {
-#         datatable(tutshern %>%
-#           filter(email == as.character(userDetails())))
-#       }
-#     }
-#   })
+
+  output$results <- DT::renderDataTable({
+
+    if (input$type == "Lecture") {
+      datatable(pivot)
+    }
+    else if (input$type == "Tutorial A") {
+        datatable(tutpatn)
+      }
+    else {
+        datatable(tutshern)
+      }
+
+  })
 
 
   output$absent <- renderValueBox({
