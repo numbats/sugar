@@ -254,10 +254,27 @@ landing_page <- fluidRow(
   br(),
   column(12, googleAuthUI("gauth_login"), align = "center")
 )
+`%notin%` <- Negate(`%in%`)
+authorised_list <- as.tibble(c(pivot$email,"aarathy.babu@monash.edu"))
+
+
+
+## error page
+
+error_page <- fluidRow(
+  setBackgroundImage(src =
+                       # "https://ohgm.co.uk/wp-content/uploads/2015/09/500x500-hor.gif"
+                       "https://media2.giphy.com/media/dAWZiSMbMvObDWP3aA/giphy.gif?cid=790b76112ebc2cd4920e9b8eee5c21b875d80efb65eac044&rid=giphy.gif&ct=g"
+                     , shinydashboard = TRUE),
+  br(),
+  br(),
+  h3("Unauthorized Access", style = "text-align:center;color:white;"),
+  br())
 
 server <- function(input, output, session) {
-  login <- FALSE
-  USER <- reactiveValues(login = login)
+
+
+  USER <- reactiveValues(login = FALSE)
 
  # Authentication
   accessToken <- callModule(googleAuth, "gauth_login",
@@ -266,26 +283,38 @@ server <- function(input, output, session) {
     login_class = "btn btn-success",
     logout_class = "btn btn-success"
   )
+  userDetails <- reactive({
+    validate(
+      need(accessToken(), "")
+    )
 
-
-  logged <- reactive({
-    if (is.null(accessToken()) == FALSE) {
-      USER$login <- TRUE
-    } else {
-      loginpage
-    }
+    with_shiny(get_email, shiny_access_token = accessToken())
   })
 
 
+  output$user_name <- renderText({
+    validate(
+      need(userDetails(), "")
+    )
+
+    userDetails()
+  })
+#& (is.element(as.character(userDetails()), authorised_list$value)==TRUE)
+
+
   output$sidebarpanel <- renderUI({
-    if (is.null(accessToken()) == FALSE) {
+    if ((is.null(accessToken()) == FALSE )) {
+      if((is.element(as.character(userDetails()), authorised_list$value)==TRUE)){
       sidebarMenu(
        # menuItem("Student", tabName = "student", icon = icon("fas fa-user")),
         menuItem("Attendance", tabName = "attendance", icon = icon("fas fa-bell")),
         menuItem("Grade", tabName = "grade", icon = icon("fas fa-book-open")),
         googleAuthUI("gauth_login")
       )
-    } else {
+      } else
+      addClass(selector = "body", class = "sidebar-collapse")
+      }
+    else {
       addClass(selector = "body", class = "sidebar-collapse")
     }
   })
@@ -303,6 +332,7 @@ server <- function(input, output, session) {
   )
 
 
+
   userhd <- reactive({
     validate(
       need(accessToken(), "")
@@ -314,8 +344,8 @@ server <- function(input, output, session) {
 
   output$body <- renderUI({
 
-if (is.null(accessToken()) == FALSE) {
-
+if ((is.null(accessToken()) == FALSE )) {
+if((is.element(as.character(userDetails()), authorised_list$value)==TRUE)){
       if(as.character(userhd())=="student.monash.edu")
         {
       tabItems(
@@ -346,28 +376,15 @@ if (is.null(accessToken()) == FALSE) {
         staff_second_tab
       )
 
-  }
+    }}
+  else
+    error_page
 
   }
     else {landing_page}
   })
 
-  userDetails <- reactive({
-    validate(
-      need(accessToken(), "")
-    )
-    USER$login <- TRUE
-    with_shiny(get_email, shiny_access_token = accessToken())
-  })
 
-
-  output$user_name <- renderText({
-    validate(
-      need(userDetails(), "")
-    )
-
-    userDetails()
-  })
 
 
 
