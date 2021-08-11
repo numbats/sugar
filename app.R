@@ -216,6 +216,13 @@ second_tab <- tabItem(
   )
 )
 
+staff_second_tab <- tabItem(
+  tabName = "grade",
+  fluidRow(
+    box(width = 12, dataTableOutput("full"))
+  )
+)
+
 staff_first_tab <-  tabItem(
   tabName = "attendance", class = "active",
   fluidRow(
@@ -336,7 +343,7 @@ if (is.null(accessToken()) == FALSE) {
 
         # second tab
 
-        second_tab
+        staff_second_tab
       )
 
   }
@@ -395,13 +402,16 @@ if (is.null(accessToken()) == FALSE) {
   output$results <- DT::renderDataTable({
 
     if (input$type == "Lecture") {
-      datatable(pivot)
+      datatable(pivot%>%
+                  filter(!is.na(email)))
     }
     else if (input$type == "Tutorial A") {
-        datatable(tutpatn)
+        datatable(tutpatn%>%
+                    filter(!is.na(email)))
       }
     else {
-        datatable(tutshern)
+        datatable(tutshern%>%
+                    filter(!is.na(email)))
       }
 
   })
@@ -492,6 +502,10 @@ if (is.null(accessToken()) == FALSE) {
       filter(email == as.character(userDetails())))
   })
 
+  output$full <- DT::renderDataTable({
+    datatable(grades_list%>%
+                filter(!is.na(email)))
+  })
   output$calendar <- renderFullcalendar({
     fullcalendar(data)
   })
