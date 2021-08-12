@@ -76,7 +76,7 @@ studentidlist <- lecn %>%
 lecn <- lecn %>%
   mutate_all(funs(type.convert(as.character(.))))
 
-pivot <- lecn %>%
+pivot_date <- lecn %>%
   pivot_longer(!c(Lecture, `Student Email`,
                   `Away for portion`, `Excused absence`,
                   `Unexcused absence`),
@@ -86,7 +86,20 @@ pivot <- lecn %>%
   mutate(Present = case_when(
     attendance == "P" ~ 1,
     TRUE ~ 0
-  )) %>%
+  ),
+  date=paste0(date,"/2021"),
+  color=case_when(
+    attendance == "P" ~ "green",
+    attendance == "A" ~ "orange",
+    attendance == "E" ~ "blue",
+    attendance == "U" ~ "red"
+  ))
+
+
+
+
+
+pivot <- pivot_date%>%
   select(`Student Email`, `Away for portion`,
          `Excused absence`, `Unexcused absence`,
          Present) %>%
@@ -101,11 +114,11 @@ pivot <- lecn %>%
   )
 # Tutorial attendance
 tutpatdf <- read_sheet(lec, sheet = 2, skip = 1)
-tutpatn <- tutpatdf[-1, ]
-tutpatn <- tutpatn %>%
+tutpatn_new <- tutpatdf[-1, ]
+tutpatn_new <- tutpatn_new %>%
   mutate_all(funs(type.convert(as.character(.))))
 
-tutpatn <- tutpatn %>%
+tutpatn_date <- tutpatn_new %>%
   pivot_longer(!c(`Tutorial A`, `Student Email`,
                   `Away for portion`, `Excused absence`,
                   `Unexcused absence`),
@@ -114,7 +127,16 @@ tutpatn <- tutpatn %>%
   mutate(Present = case_when(
     attendance == "P" ~ 1,
     TRUE ~ 0
-  )) %>%
+  ),
+  date=paste0(date,"/2021"),
+  color=case_when(
+    attendance == "P" ~ "green",
+    attendance == "A" ~ "orange",
+    attendance == "E" ~ "blue",
+    attendance == "U" ~ "red"
+  ))
+
+tutpatn <- tutpatn_date%>%
   select(`Student Email`, `Away for portion`,
          `Excused absence`, `Unexcused absence`,
          Present) %>%
@@ -130,12 +152,12 @@ tutpatn <- tutpatn %>%
 
 
 tutsherdf <- read_sheet(lec, sheet = 3, skip = 1)
-tutshern <- tutsherdf[-1, ]
+tutshern_new <- tutsherdf[-1, ]
 
-tutshern <- tutshern %>%
+tutshern_new <- tutshern_new %>%
   mutate_all(funs(type.convert(as.character(.))))
 
-tutshern <- tutshern %>%
+tutshern_date <- tutshern_new %>%
   pivot_longer(!c(`Tutorial B`, `Student Email`, `Away for portion`,
                   `Excused absence`, `Unexcused absence`),
     names_to = "date", values_to = "attendance"
@@ -143,7 +165,17 @@ tutshern <- tutshern %>%
   mutate(Present = case_when(
     attendance == "P" ~ 1,
     TRUE ~ 0
-  )) %>%
+  ),
+  date=paste0(date,"/2021"),
+  color=case_when(
+    attendance == "P" ~ "green",
+    attendance == "A" ~ "orange",
+    attendance == "E" ~ "blue",
+    attendance == "U" ~ "red"
+  ))
+
+
+tutpatn <- tutpatn_date%>%
   select(`Student Email`, `Away for portion`,
          `Excused absence`, `Unexcused absence`, Present) %>%
   rename(email = `Student Email`) %>%
@@ -167,14 +199,7 @@ grades_list <- graden %>%
   rename(email = `Student Email`)
 
 
-# Calender
 
-data <- data.frame(
-  title = paste("Event", 1:3),
-  start = c("2021-08-01", "2021-08-02", "2021-08-03"),
-  end = c("2021-08-02", "2021-08-03", "2021-08-04"),
-  color = c("red", "blue", "green")
-)
 
 
 # Dashboard ui & server
@@ -190,21 +215,25 @@ first_tab <- tabItem(
   tabName = "attendance", class = "active",
   fluidRow(
     br(),
-    p("Welcome ! ", textOutput("user_name")),
+    h3("Attendance", style = "text-align:center;color:black;"),
+    br(),
     selectInput(
       "type",
       "Select class",
       c("Lecture", "Tutorial"),
       selected = NULL
     ),
-    valueBoxOutput("present",width = 3),
+    fluidRow(
+      br(),
+      column(5,
+             align = "center",
+             fullcalendarOutput("calendar", width = "100%", height = "100%")),
+    column(7,valueBoxOutput("present",width = 3),
     valueBoxOutput("absent",width = 3),
     valueBoxOutput("excused",width = 3),
-    valueBoxOutput("unexcused",width = 3),
-    box(width = 12, dataTableOutput("results")),
-    column(12,
-           align = "center",
-           fullcalendarOutput("calendar", width = "50%", height = "50%")
+    valueBoxOutput("unexcused",width = 3))
+    #box(width = 12, dataTableOutput("results"))
+
     )
   )
 )
@@ -227,7 +256,7 @@ staff_first_tab <-  tabItem(
   tabName = "attendance", class = "active",
   fluidRow(
     br(),
-    p("Welcome ! ", textOutput("user_name")),
+   # p("Welcome ! ", textOutput("user_name")),
     selectInput(
       "type",
       "Select class",
@@ -248,7 +277,7 @@ landing_page <- fluidRow(
   h2("Welcome to Sugar !", style = "text-align:center;color:black;"),
   h3("Shiny Unit Grade and Attendance Reviewer", style = "text-align:center;color:black;"),
   br(),
-  column(12, align = "center", imageOutput("picture", width = "100%", height = "230px")),
+  column(12, align = "center", imageOutput("picture", width = "100%", height = "200px")),
   p("Shiny Unit Grade and Attendance Reviewer, or SUGAR,
             is a shiny web app that allows students to see their grade and attendance of a unit", style = "text-align:center;color:black;"),
   br(),
@@ -317,8 +346,12 @@ server <- function(input, output, session) {
       if((is.element(as.character(userDetails()), authorised_list$value)==TRUE)){
       sidebarMenu(
        # menuItem("Student", tabName = "student", icon = icon("fas fa-user")),
+        br(),
+        p("Welcome ! ", textOutput("user_name")),
+        br(),
         menuItem("Attendance", tabName = "attendance", icon = icon("fas fa-bell")),
         menuItem("Grade", tabName = "grade", icon = icon("fas fa-book-open")),
+        br(),
         googleAuthUI("gauth_login")
       )
       } else
@@ -335,7 +368,7 @@ server <- function(input, output, session) {
         src = "www/blc.png",
         contentType = "image/png",
         width = 420,
-        height = 200
+        height = 150
       ))
     },
     deleteFile = FALSE
@@ -534,8 +567,42 @@ if((is.element(as.character(userDetails()), authorised_list$value)==TRUE)){
                 filter(!is.na(email)))
   })
   output$calendar <- renderFullcalendar({
+
+    if (input$type == "Lecture") {
+
+    # Calender_lecture
+   cal_date<-  pivot_date%>%
+      filter(`Student Email` ==as.character(userDetails()))%>%
+     drop_na()
+
+
+
+    }
+
+    else {
+      if (as.character(userDetails()) %in% tutpatn$email) {
+
+        cal_date<-  tutpatn_date%>%
+          filter(`Student Email` ==as.character(userDetails()))%>%
+          drop_na()
+
+      }
+      else {
+        cal_date<-  tutshern_date%>%
+          filter(`Student Email` ==as.character(userDetails()))%>%
+          drop_na()
+      }
+    }
+
+    data <- data.frame(
+      title = cal_date$attendance,
+      start = c(as.Date(unique(cal_date$date),"%d/%m/%Y")),
+      end = c(as.Date(unique(cal_date$date),"%d/%m/%Y")),
+      color = c(cal_date$color)
+    )
     fullcalendar(data)
-  })
+
+    })
 
   observe({
     if (USER$login) {
