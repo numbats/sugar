@@ -175,7 +175,7 @@ tutshern_date <- tutshern_new %>%
   ))
 
 
-tutpatn <- tutpatn_date%>%
+tutshern <- tutshern_date%>%
   select(`Student Email`, `Away for portion`,
          `Excused absence`, `Unexcused absence`, Present) %>%
   rename(email = `Student Email`) %>%
@@ -241,8 +241,16 @@ first_tab <- tabItem(
 second_tab <- tabItem(
   tabName = "grade",
   fluidRow(
-    box(width = 12, dataTableOutput("results2"))
-  )
+    br(),
+    h3("Grade", style = "text-align:center;color:black;"),
+    br(),
+    fluidRow(
+   column(width = 6,dataTableOutput("results2")),
+   column(width=6,plotOutput("histogram"))
+  ),
+  br(),
+  column(12,
+         align = "center",plotOutput("unit")))
 )
 
 staff_second_tab <- tabItem(
@@ -429,8 +437,6 @@ if((is.element(as.character(userDetails()), authorised_list$value)==TRUE)){
 
 
 
-
-
   output$present <- renderValueBox({
 
     if (input$type == "Lecture") {
@@ -557,15 +563,69 @@ if((is.element(as.character(userDetails()), authorised_list$value)==TRUE)){
     )
   })
 
-  output$results2 <- DT::renderDataTable({
-    datatable(grades_list %>%
-      filter(email == as.character(userDetails())))
+
+  student_grade_show<- reactive({
+
+    grade_student<- grades_list %>%
+      filter(email == as.character(userDetails()))%>%
+      pivot_longer(cols = `ASSESS 1`:PRESENTATION,names_to = "Assessment", values_to = "Marks")%>%
+      select(-email)
+    return(grade_student)
   })
+
+  output$results2 <- DT::renderDataTable({
+   grade_table<-  student_grade_show()
+    datatable(grade_table,selection = 'single')
+  })
+
+
+
+  output$histogram <- renderPlot({
+
+    if(is.null(input$results2_rows_selected)==TRUE)
+    {
+
+      assessment_type <- "ASSESS 1"
+
+    }
+else {
+  selected <- input$results2_rows_selected
+  grade_table<- student_grade_show()
+  grade_table$ID <- seq.int(nrow(grade_table))
+  assessment_type<- grade_table %>%
+    filter(ID==selected)%>%
+    pull(Assessment)
+}
+   grades_list %>%
+      drop_na()%>%
+      pivot_longer(cols = `ASSESS 1`:PRESENTATION,names_to = "Assessment", values_to = "Marks")%>%
+      filter(Assessment==as.character(assessment_type))%>%
+      ggplot(aes(x=Marks))+
+     geom_histogram()+theme_bw()+labs(title = "Marks Distribution",
+                                      y="Number of Students",
+                                      x="Marks")
+
+
+  })
+
+  output$unit <- renderPlot({
+
+    grades_list %>%
+      drop_na()%>%
+      pivot_longer(cols = `ASSESS 1`:PRESENTATION,names_to = "Assessment", values_to = "Marks")%>%
+      ggplot(aes(x=Assessment,y=Marks))+
+      geom_violin()+theme_bw()+labs(title = "Marks Distribution of Unit Assessments",
+                                    y="Marks",
+                                    x="Assessment")
+  })
+
 
   output$full <- DT::renderDataTable({
     datatable(grades_list%>%
                 filter(!is.na(email)))
   })
+
+
   output$calendar <- renderFullcalendar({
 
     if (input$type == "Lecture") {
