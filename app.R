@@ -228,10 +228,11 @@ first_tab <- tabItem(
       column(5,
              align = "center",
              fullcalendarOutput("calendar", width = "100%", height = "100%")),
-    column(7,valueBoxOutput("present",width = 3),
-    valueBoxOutput("absent",width = 3),
-    valueBoxOutput("excused",width = 3),
-    valueBoxOutput("unexcused",width = 3))
+    column(7,valueBoxOutput("present",width = 4),
+    valueBoxOutput("absent",width = 4),
+
+    valueBoxOutput("excused",width = 4),
+    valueBoxOutput("unexcused",width = 4))
     #box(width = 12, dataTableOutput("results"))
 
     )
@@ -533,7 +534,7 @@ if((is.element(as.character(userDetails()), authorised_list$value)==TRUE)){
 
     valueBox(
       paste0(excusednum), "Excused Absence", icon = icon("list"),
-      color = "aqua"
+      color = "purple"
     )
   })
 
@@ -559,7 +560,7 @@ if((is.element(as.character(userDetails()), authorised_list$value)==TRUE)){
 
     valueBox(
       paste0(unexcusednum), "Unexcused Absence", icon = icon("list"),
-      color = "purple"
+      color = "yellow"
     )
   })
 
