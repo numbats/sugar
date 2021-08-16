@@ -213,11 +213,13 @@ ui <- dashboardPage(header, sidebar, body, skin = "blue")
 # first tab
 first_tab <- tabItem(
   tabName = "attendance", class = "active",
+
   fluidRow(
     br(),
     h3("Attendance", style = "text-align:center;color:black;"),
     br(),
-    selectInput(
+    box(status = "primary",width=12,
+   selectInput(width="40%",
       "type",
       "Select class",
       c("Lecture", "Tutorial"),
@@ -225,19 +227,25 @@ first_tab <- tabItem(
     ),
     fluidRow(
       br(),
+
       column(5,
              align = "center",
              fullcalendarOutput("calendar", width = "100%", height = "100%")),
-    column(7,valueBoxOutput("present",width = 4),
-    valueBoxOutput("absent",width = 4),
+    column(5, offset = 1,
+    fluidRow(
+    valueBoxOutput("present",width = 6),
+    valueBoxOutput("absent",width = 6)
 
-    valueBoxOutput("excused",width = 4),
-    valueBoxOutput("unexcused",width = 4))
+    ),
+    fluidRow(
+
+    valueBoxOutput("excused",width = 6),
+    valueBoxOutput("unexcused",width = 6)))
     #box(width = 12, dataTableOutput("results"))
 
     )
   )
-)
+))
 
 second_tab <- tabItem(
   tabName = "grade",
@@ -245,20 +253,22 @@ second_tab <- tabItem(
     br(),
     h3("Grade", style = "text-align:center;color:black;"),
     br(),
+    box(status = "primary",width=12,
+
     fluidRow(
    column(width = 6,dataTableOutput("results2")),
    column(width=6,plotOutput("histogram"))
-  ),
-  br(),
-  column(12,
-         align = "center",plotOutput("unit")))
-)
+  ))
+))
 
 staff_second_tab <- tabItem(
   tabName = "grade",
-  fluidRow(
-    box(width = 12, dataTableOutput("full"))
-  )
+  box(status = "primary",width=12, fluidRow(
+    box(width = 12, dataTableOutput("full")),
+    br(),
+    column(12,
+           align = "center",plotOutput("unit"))
+  ))
 )
 
 staff_first_tab <-  tabItem(
@@ -266,14 +276,15 @@ staff_first_tab <-  tabItem(
   fluidRow(
     br(),
    # p("Welcome ! ", textOutput("user_name")),
-    selectInput(
+   box(status = "primary",width=12,
+      selectInput(width="40%",
       "type",
       "Select class",
       c("Lecture", "Tutorial A","Tutorial B"),
       selected = NULL
     ),
     box(width = 12, dataTableOutput("results"))
-  )
+  ))
 )
 
 landing_page <- fluidRow(
@@ -345,7 +356,7 @@ server <- function(input, output, session) {
       need(userDetails(), "")
     )
 
-    userDetails()
+  paste0("  ",userDetails())
   })
 #& (is.element(as.character(userDetails()), authorised_list$value)==TRUE)
 
@@ -356,7 +367,7 @@ server <- function(input, output, session) {
       sidebarMenu(
        # menuItem("Student", tabName = "student", icon = icon("fas fa-user")),
         br(),
-        p("Welcome ! ", textOutput("user_name")),
+        p("  Welcome ! ", textOutput("user_name")),
         br(),
         menuItem("Attendance", tabName = "attendance", icon = icon("fas fa-bell")),
         menuItem("Grade", tabName = "grade", icon = icon("fas fa-book-open")),
@@ -460,8 +471,8 @@ if((is.element(as.character(userDetails()), authorised_list$value)==TRUE)){
       }
 
     valueBox(
-      paste0(presentnum), "Present", icon = icon("list"),
-      color = "purple"
+      paste0(presentnum), "Present",
+      color = "light-blue"
     )
   })
 
@@ -506,8 +517,8 @@ if((is.element(as.character(userDetails()), authorised_list$value)==TRUE)){
       }
 
     valueBox(
-      paste0(absentnum), "Absent", icon = icon("list"),
-      color = "yellow"
+      paste0(absentnum), "Absent",
+      color = "light-blue"
     )
   })
 
@@ -533,8 +544,8 @@ if((is.element(as.character(userDetails()), authorised_list$value)==TRUE)){
       }
 
     valueBox(
-      paste0(excusednum), "Excused Absence", icon = icon("list"),
-      color = "purple"
+      paste0(excusednum), "Excused Absence",
+      color = "light-blue"
     )
   })
 
@@ -559,8 +570,8 @@ if((is.element(as.character(userDetails()), authorised_list$value)==TRUE)){
       }
 
     valueBox(
-      paste0(unexcusednum), "Unexcused Absence", icon = icon("list"),
-      color = "yellow"
+      paste0(unexcusednum), "Unexcused Absence",
+      color = "light-blue"
     )
   })
 
@@ -602,7 +613,7 @@ else {
       pivot_longer(cols = `ASSESS 1`:PRESENTATION,names_to = "Assessment", values_to = "Marks")%>%
       filter(Assessment==as.character(assessment_type))%>%
       ggplot(aes(x=Marks))+
-     geom_histogram()+theme_bw()+labs(title = "Marks Distribution",
+     geom_histogram(fill="#006DAE")+theme_bw()+labs(title = "Marks Distribution",
                                       y="Number of Students",
                                       x="Marks")
 
