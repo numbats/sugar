@@ -199,7 +199,9 @@ grades_list <- graden %>%
   rename(email = `Student Email`)
 
 
-
+n_students <- grades_list%>%
+  filter(!is.na(email))%>%
+nrow()
 
 
 # Dashboard ui & server
@@ -216,9 +218,10 @@ first_tab <- tabItem(
 
   fluidRow(
     br(),
-    h3("Attendance", style = "text-align:center;color:black;"),
-    br(),
-    box(status = "primary",width=12,
+
+    box(status = "primary",width=12,solidHeader = TRUE,
+        h3("Attendance", style = "text-align:center;color:black;"),
+        br(),
    selectInput(width="40%",
       "type",
       "Select class",
@@ -251,15 +254,24 @@ second_tab <- tabItem(
   tabName = "grade",
   fluidRow(
     br(),
+
+  if(n_students>15){box(status = "primary",width = 12,
+  fluidRow(
     h3("Grade", style = "text-align:center;color:black;"),
     br(),
-    box(status = "primary",width=12,
-
-    fluidRow(
-   column(width = 6,dataTableOutput("results2")),
-   column(width=6,plotOutput("histogram"))
-  ))
+   column(width = 6,dataTableOutput("results2", width = "100%", height = "auto")),
+   column(width=6,plotOutput("histogram")))
+  )
+  }
+else {box(status = "primary",width = 12,height = "600px",solidHeader = TRUE,
+          fluidRow(
+            h3("Grade", style = "text-align:center;color:black;"),
+            br(),
+            column(width = 6,offset=3,
+                   dataTableOutput("results2", width = "100%", height = "auto"))))
+}
 ))
+
 
 staff_second_tab <- tabItem(
   tabName = "grade",
@@ -587,12 +599,18 @@ if((is.element(as.character(userDetails()), authorised_list$value)==TRUE)){
 
   output$results2 <- DT::renderDataTable({
    grade_table<-  student_grade_show()
-    datatable(grade_table,selection = 'single')
+    datatable(grade_table,selection = 'single', options = list(dom = 'ft',initComplete = JS(
+      "function(settings, json) {",
+      "$(this.api().table().header()).css({'background-color': '#006DAE', 'color': '#fff'});",
+      "}")))
   })
 
 
 
   output$histogram <- renderPlot({
+
+    if(n_students>15)
+    {
 
     if(is.null(input$results2_rows_selected)==TRUE)
     {
@@ -608,15 +626,38 @@ else {
     filter(ID==selected)%>%
     pull(Assessment)
 }
-   grades_list %>%
+      grade_table<- student_grade_show()
+ total_marks_assessment <-   grades_list %>%
       drop_na()%>%
       pivot_longer(cols = `ASSESS 1`:PRESENTATION,names_to = "Assessment", values_to = "Marks")%>%
-      filter(Assessment==as.character(assessment_type))%>%
-      ggplot(aes(x=Marks))+
-     geom_histogram(fill="#006DAE")+theme_bw()+labs(title = "Marks Distribution",
-                                      y="Number of Students",
-                                      x="Marks")
+      filter(Assessment==as.character(assessment_type))
 
+ max_count <-total_marks_assessment %>%
+              group_by(Marks)%>%
+   count()%>%
+   pull(n) %>%
+   max()
+
+ total_marks_assessment %>%
+      ggplot(aes(x=Marks))+
+     geom_histogram(fill="#006DAE")+
+     geom_vline(colour="red", linetype = "dashed",xintercept = grade_table%>%
+                  filter(Assessment==as.character(assessment_type))%>%
+                  pull(Marks)
+                  )+
+     geom_text(mapping = aes(x = Marks,
+                             y = 1+nrow(total_marks_assessment%>%
+                                        filter(Marks==(grade_table%>%
+                                                         filter(Assessment==as.character(assessment_type))%>%
+                                                         pull(Marks)))),
+                             label = "Your score", angle=90),nudge_x=0.03,hjust=0,
+               data =  grade_table%>%
+                 filter(Assessment==as.character(assessment_type)))+
+     theme_bw()+labs(title = "Marks Distribution",
+                                      y="Number of Students",
+                                      x="Marks")+
+   ylim(0,5+max_count)
+}
 
   })
 
