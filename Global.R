@@ -1,13 +1,3 @@
-library(shiny)
-library(fullcalendar)
-library(shinydashboard)
-library(DT)
-library(shinyWidgets)
-library(shinyjs)
-library(googlesheets4)
-library(tidyverse)
-library(googleAuthR)
-library(monash)
 
 # google credentials & scopes
 
