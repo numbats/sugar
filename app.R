@@ -135,9 +135,8 @@ server <- function(input, output, session) {
     }
   })
 
-
-  source("student_server.R",  local = TRUE)$value
-  source("staff_server.R",  local = TRUE)$value
+  source(file.path("server","student_server.R"),  local = TRUE)$value
+  source(file.path("server","staff_server.R"),  local = TRUE)$value
 
 
 
