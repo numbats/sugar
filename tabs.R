@@ -15,7 +15,7 @@ landing_page <- fluidRow(
   column(12, googleAuthUI("gauth_login"), align = "center")
 )
 `%notin%` <- Negate(`%in%`)
-authorised_list <- as.tibble(c(pivot$email, "aarathy.babu@monash.edu"))
+authorised_list <- as.tibble(c(pivot$email, "aarathy.babu@monash.edu","emi.tanaka@monash.edu"))
 
 
 
@@ -43,7 +43,7 @@ error_page <- fluidRow(
 ## Attendance tab for student users
 
 first_tab <- tabItem(
-  tabName = "attendance", class = "active",
+  tabName = "student_attendance", class = "active",
   fluidRow(
     br(),
     box(
@@ -84,7 +84,7 @@ first_tab <- tabItem(
 # Grades tab for student users adjusted to class strength
 
 second_tab <- tabItem(
-  tabName = "grade",
+  tabName = "student_grade",
   fluidRow(
     br(),
     if (n_students > 15) {
@@ -186,4 +186,78 @@ staff_second_tab <- tabItem(
     )
 
 
+# VIEW AS STUDENT TABS
+
+## Attendance tab
+
+view_first_tab <- tabItem(
+  tabName = "student_attendance", class = "active",
+  fluidRow(
+    br(),
+    box(
+      status = "primary", width = 12, solidHeader = TRUE,
+      h3("Attendance", style = "text-align:center;color:black;"),
+      br(),
+      selectInput(
+        width = "40%",
+        "type",
+        "Select class",
+        c("Lecture", "Tutorial"),
+        selected = NULL
+      ),
+      fluidRow(
+        br(),
+        column(5,
+               align = "center",
+               fullcalendarOutput("calendar", width = "100%", height = "100%")
+        ),
+        column(5,
+               offset = 1,
+               fluidRow(
+                 valueBoxOutput("present", width = 6),
+                 valueBoxOutput("absent", width = 6)
+               ),
+               fluidRow(
+                 valueBoxOutput("excused", width = 6),
+                 valueBoxOutput("unexcused", width = 6)
+               )
+        )
+
+      )
+    )
+  )
+)
+
+
+# Grades tab for student users adjusted to class strength
+
+view_second_tab <- tabItem(
+  tabName = "student_grade",
+  fluidRow(
+    br(),
+    if (n_students > 15) {
+      box(
+        status = "primary", width = 12,
+        fluidRow(
+          h3("Grade", style = "text-align:center;color:black;"),
+          br(),
+          column(width = 6, dataTableOutput("student_user_grades", width = "100%", height = "auto")),
+          column(width = 6, plotOutput("histogram"))
+        )
+      )
+    } else {
+      box(
+        status = "primary", width = 12, height = "600px", solidHeader = TRUE,
+        fluidRow(
+          h3("Grade", style = "text-align:center;color:black;"),
+          br(),
+          column(
+            width = 6, offset = 3,
+            dataTableOutput("student_user_grades", width = "100%", height = "auto")
+          )
+        )
+      )
+    }
+  )
+)
 

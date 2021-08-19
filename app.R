@@ -62,17 +62,41 @@ server <- function(input, output, session) {
   output$sidebarpanel <- renderUI({
     if ((is.null(accessToken()) == FALSE)) {
       if ((is.element(as.character(userDetails()), authorised_list$value) == TRUE)) {
+        if (as.character(userhd()) == "student.monash.edu") {
         sidebarMenu(
+          id="student_tabs",
           # menuItem("Student", tabName = "student", icon = icon("fas fa-user")),
           br(),
           p("  Welcome ! ", textOutput("user_name")),
           br(),
-          menuItem("Attendance", tabName = "attendance", icon = icon("fas fa-bell")),
-          menuItem("Grade", tabName = "grade", icon = icon("fas fa-book-open")),
+          menuItem("Attendance", tabName = "student_attendance", icon = icon("fas fa-bell")),
+          menuItem("Grade", tabName = "student_grade", icon = icon("fas fa-book-open")),
           br(),
           googleAuthUI("gauth_login")
         )
-      } else {
+      }
+        else {
+          sidebarMenu(
+            id="staff_tabs",
+            br(),
+            p("  Welcome ! ", textOutput("user_name")),
+            br(),
+            menuItem("Attendance", tabName = "attendance", icon = icon("fas fa-bell")),
+            menuItem("Grade", tabName = "grade", icon = icon("fas fa-book-open")),
+            actionBttn(
+              inputId = "view",
+              label = "View as Student",
+              color = "success",
+              style = "simple",
+              block = FALSE
+            ),
+            br(),
+            googleAuthUI("gauth_login")
+          )
+
+        }
+
+        } else {
         addClass(selector = "body", class = "sidebar-collapse")
       }
     } else {
@@ -106,8 +130,7 @@ server <- function(input, output, session) {
     with_shiny(get_hd, shiny_access_token = accessToken())
   })
 
-  `%notin%` <- Negate(`%in%`)
-  authorised_list <- as.tibble(c(pivot$email, "aarathy.babu@monash.edu"))
+
 
       # Body of app
 
@@ -123,6 +146,8 @@ server <- function(input, output, session) {
             second_tab
           )
         } else {
+
+
           tabItems(
             # first tab
             staff_first_tab,
@@ -131,8 +156,10 @@ server <- function(input, output, session) {
 
             staff_second_tab
           )
+          }
+
         }
-      } else {
+       else {
         error_page
       }
     } else {
@@ -142,8 +169,94 @@ server <- function(input, output, session) {
 
   source(file.path("server","student_server.R"),  local = TRUE)$value
   source(file.path("server","staff_server.R"),  local = TRUE)$value
+  source(file.path("server","view_as_student.R"),  local = TRUE)$value
+
+  observeEvent(input$view, {
+
+    shinyjs::onclick("view",
 
 
+    output$sidebarpanel <- renderUI({
+
+      sidebarMenu(
+        id="student_tabs",
+        # menuItem("Student", tabName = "student", icon = icon("fas fa-user")),
+        br(),
+        p("  Welcome ! "),
+        p("Student Email ID"),
+        br(),
+        menuItem("Attendance", tabName = "student_attendance", icon = icon("fas fa-bell")),
+        menuItem("Grade", tabName = "student_grade", icon = icon("fas fa-book-open")),
+        br(),
+        actionBttn(
+          inputId = "view_out",
+          label = "Log out",
+          color = "success",
+          style = "simple",
+          block = FALSE
+        )
+      )
+
+    }),
+
+    output$body <-renderUI({
+      tabItems(
+        # first tab
+        view_first_tab,
+
+        # second tab
+
+        view_second_tab
+      )
+    })
+
+    )
+  })
+
+  observeEvent(input$view_out, {
+
+    shinyjs::onclick("view_out",
+                     output$sidebarpanel <- renderUI({
+                       sidebarMenu(
+                         id="staff_tabs",
+                         br(),
+                         p("  Welcome ! ", textOutput("user_name")),
+                         br(),
+                         menuItem("Attendance", tabName = "attendance", icon = icon("fas fa-bell")),
+                         menuItem("Grade", tabName = "grade", icon = icon("fas fa-book-open")),
+                         actionBttn(
+                           inputId = "view",
+                           label = "View as Student",
+                           color = "success",
+                           style = "simple",
+                           block = FALSE
+                         ),
+                         br(),
+                         googleAuthUI("gauth_login")
+                       )
+
+                     }) ,
+
+                     output$body <-renderUI({
+
+
+                       tabItems(
+                         # first tab
+                         staff_first_tab,
+
+                         # second tab
+
+                         staff_second_tab
+                       )
+
+                     })
+
+
+    )
+
+
+
+  })
 
   # LOG OUT SERVER FUNCTION
 
@@ -155,6 +268,8 @@ server <- function(input, output, session) {
       )
     }
   })
+
+
 
 
   # UNAUTHORIZED ACCESS
