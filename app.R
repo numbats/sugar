@@ -7,7 +7,7 @@ library(shinyjs)
 library(googlesheets4)
 library(tidyverse)
 library(googleAuthR)
-library(monash)
+
 
 source("Global.R")
 source("tabs.R")
@@ -17,7 +17,7 @@ source("tabs.R")
 
 # DASHBOARD UI & SERVER
 
-header <- dashboardHeader(title = "SUGAR")
+header <- dashboardHeader(title = "ETCXXXX")
 
 sidebar <- dashboardSidebar(shinyjs::useShinyjs(), uiOutput("sidebarpanel"))
 body <- dashboardBody(shinyjs::useShinyjs(), uiOutput("body"))
@@ -282,4 +282,4 @@ server <- function(input, output, session) {
   })
 }
 
-runApp(list(ui = ui, server = server), launch.browser = TRUE, port = 4549)
+runApp(list(ui = ui, server = server),port = 4549)

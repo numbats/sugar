@@ -1,13 +1,3 @@
-library(shiny)
-library(fullcalendar)
-library(shinydashboard)
-library(DT)
-library(shinyWidgets)
-library(shinyjs)
-library(googlesheets4)
-library(tidyverse)
-library(googleAuthR)
-library(monash)
 
 # google credentials & scopes
 
@@ -58,7 +48,7 @@ sheet <- tryCatch(
       token = "authentication.rds"
     )
     lec <- gs4_get("125VrIIShEBJ2Xp5YgkzZN3uT-lxg_5c9C5nCgYYlv3M")
-    grade <- gs4_get("13dQxAtrtr-0NyMsK9Ex0UOypLeTqgq12oKRkvY7fEXY")
+    grade <- gs4_get("1lvy0z2i47WziTQW8Nfj3Jv7dntH_uhVfvah-9iBlK7c")
   },
   error = function(e) {
     message("Access has not been granted, please try again in 5 minutes.")
@@ -68,16 +58,15 @@ sheet <- tryCatch(
 
 # Lecture attendance
 
-lecdf <- read_sheet(lec, skip = 1)
-lecn <- lecdf[-1, ]
-studentidlist <- lecn %>%
-  dplyr::select(Lecture)
+lecdf <- read_sheet(lec)
 
-lecn <- lecn %>%
+
+
+lecn <- lecdf %>%
   mutate_all(funs(type.convert(as.character(.))))
 
 pivot_date <- lecn %>%
-  pivot_longer(!c(Lecture, `Student Email`,
+  pivot_longer(!c(`Student Email`,
                   `Away for portion`, `Excused absence`,
                   `Unexcused absence`),
                names_to = "date",
@@ -113,13 +102,13 @@ pivot <- pivot_date%>%
     `Unexcused absence` = max(`Unexcused absence`)
   )
 # Tutorial attendance
-tutpatdf <- read_sheet(lec, sheet = 2, skip = 1)
-tutpatn_new <- tutpatdf[-1, ]
-tutpatn_new <- tutpatn_new %>%
+tutpatdf <- read_sheet(lec, sheet = 2)
+
+tutpatn_new <- tutpatdf %>%
   mutate_all(funs(type.convert(as.character(.))))
 
 tutpatn_date <- tutpatn_new %>%
-  pivot_longer(!c(`Tutorial A`, `Student Email`,
+  pivot_longer(!c( `Student Email`,
                   `Away for portion`, `Excused absence`,
                   `Unexcused absence`),
                names_to = "date", values_to = "attendance"
@@ -151,14 +140,14 @@ tutpatn <- tutpatn_date%>%
 
 
 
-tutsherdf <- read_sheet(lec, sheet = 3, skip = 1)
-tutshern_new <- tutsherdf[-1, ]
+tutsherdf <- read_sheet(lec, sheet = 3)
 
-tutshern_new <- tutshern_new %>%
+
+tutshern_new <- tutsherdf %>%
   mutate_all(funs(type.convert(as.character(.))))
 
 tutshern_date <- tutshern_new %>%
-  pivot_longer(!c(`Tutorial B`, `Student Email`, `Away for portion`,
+  pivot_longer(!c( `Student Email`, `Away for portion`,
                   `Excused absence`, `Unexcused absence`),
                names_to = "date", values_to = "attendance"
   ) %>%
@@ -188,17 +177,15 @@ tutshern <- tutshern_date%>%
   )
 
 `%notin%` <- Negate(`%in%`)
-authorised_list <- as.tibble(c(pivot$email, "aarathy.babu@monash.edu"))
+authorised_list <- as.tibble(c(pivot$email, "aarathy.babu@monash.edu","emi.tanaka@monash.edu"))
 
 # Assessment Info
-assessment_info <- read_sheet(grade, sheet = 3)
+assessment_info <- read_sheet(grade, sheet = 2)
 
 ## Grade
-gradedf <- read_sheet(grade, sheet = 2, skip = 1)
-graden <- gradedf[-1, ]
-graden <- graden[-1, ]
+gradedf <- read_sheet(grade, sheet = 1)
 
-grades_list <- graden %>%
+grades_list <- gradedf %>%
   select(c(`Student Email`, `ASSESS 1`:PRESENTATION)) %>%
   rename(email = `Student Email`)
 
@@ -211,13 +198,13 @@ staff_student_grades <- grades_list %>%
   filter(!is.na(email))
 
 staff_grades_prefinal<- staff_student_grades%>%
- pivot_longer(cols = `ASSESS 1`:PRESENTATION, values_to = "Obtained Marks",names_to = "Assessment")%>%
+  pivot_longer(cols = `ASSESS 1`:PRESENTATION, values_to = "Obtained Marks",names_to = "Assessment")%>%
   left_join(assessment_info,by="Assessment")%>%
   mutate(Obtained_Percentage=(`Obtained Marks`/`Total Marks`)*Weightage)%>%
   select(email,Assessment,`Obtained Marks`,Obtained_Percentage)
 
 staff_student_grades_final<- staff_grades_prefinal%>%
- group_by(email)%>%
+  group_by(email)%>%
   mutate(Total=sum(Obtained_Percentage))%>%
   select(email,Assessment,`Obtained Marks`,Total)%>%
   pivot_wider(email:Total,names_from = "Assessment",values_from = `Obtained Marks`)%>%

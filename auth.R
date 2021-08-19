@@ -21,6 +21,7 @@ gs4_deauth()
 gs4_auth(
   cache = ".secrets",
   email = "abab0012@student.monash.edu",
+  scopes = "https://www.googleapis.com/auth/spreadsheets",
   token = "authentication.rds"
 
 )
