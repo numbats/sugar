@@ -63,7 +63,7 @@ lecdf <- read_sheet(lec)
 
 
 lecn <- lecdf %>%
-  mutate_all(funs(type.convert(as.character(.))))
+  mutate_all(funs(type.convert(as.character(.),as.is=TRUE)))
 
 pivot_date <- lecn %>%
   pivot_longer(!c(`Student Email`,
@@ -105,7 +105,7 @@ pivot <- pivot_date%>%
 tutpatdf <- read_sheet(lec, sheet = 2)
 
 tutpatn_new <- tutpatdf %>%
-  mutate_all(funs(type.convert(as.character(.))))
+  mutate_all(funs(type.convert(as.character(.),as.is=TRUE)))
 
 tutpatn_date <- tutpatn_new %>%
   pivot_longer(!c( `Student Email`,
@@ -144,7 +144,7 @@ tutsherdf <- read_sheet(lec, sheet = 3)
 
 
 tutshern_new <- tutsherdf %>%
-  mutate_all(funs(type.convert(as.character(.))))
+  mutate_all(funs(type.convert(as.character(.),as.is=TRUE)))
 
 tutshern_date <- tutshern_new %>%
   pivot_longer(!c( `Student Email`, `Away for portion`,

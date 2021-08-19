@@ -1,5 +1,4 @@
 library(shiny)
-library(fullcalendar)
 library(shinydashboard)
 library(DT)
 library(shinyWidgets)
