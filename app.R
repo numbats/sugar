@@ -13,6 +13,8 @@ source("Global.R")
 source("tabs.R")
 
 
+
+
 # DASHBOARD UI & SERVER
 
 header <- dashboardHeader(title = "SUGAR")
@@ -21,13 +23,14 @@ sidebar <- dashboardSidebar(shinyjs::useShinyjs(), uiOutput("sidebarpanel"))
 body <- dashboardBody(shinyjs::useShinyjs(), uiOutput("body"))
 ui <- dashboardPage(header, sidebar, body, skin = "blue")
 
+
 # SERVER FUNCTION
 
 server <- function(input, output, session) {
 
   USER <- reactiveValues(login = FALSE)
 
-  # Authentication
+  # Google Authentication
   accessToken <- callModule(googleAuth, "gauth_login",
     login_text = "Sign in via Google",
     logout_text = "Sign Out",
@@ -93,7 +96,7 @@ server <- function(input, output, session) {
   )
 
 
-    # Retrieving hd of email id : @student.monash.edu / monash.edu
+    # Retrieving hd of email id : @student.monash.edu / monash.edu to check if the user is student/staff
 
   userhd <- reactive({
     validate(
@@ -103,12 +106,14 @@ server <- function(input, output, session) {
     with_shiny(get_hd, shiny_access_token = accessToken())
   })
 
+  `%notin%` <- Negate(`%in%`)
+  authorised_list <- as.tibble(c(pivot$email, "aarathy.babu@monash.edu"))
 
       # Body of app
 
   output$body <- renderUI({
-    if ((is.null(accessToken()) == FALSE)) {
-      if ((is.element(as.character(userDetails()), authorised_list$value) == TRUE)) {
+    if (is.null(accessToken()) == FALSE) {
+      if (is.element(as.character(userDetails()), authorised_list$value) == TRUE) {
         if (as.character(userhd()) == "student.monash.edu") {
           tabItems(
             # first tab

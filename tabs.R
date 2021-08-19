@@ -139,30 +139,51 @@ staff_first_tab <- tabItem(
 
 staff_second_tab <- tabItem(
   tabName = "grade",
+  h3("Grade", style = "text-align:center;color:black;"),
   tabsetPanel(
-    tabPanel("Students", box(
-      status = "primary", width = 12, solidHeader = TRUE, height = "600px",
-      h3("Grade", style = "text-align:center;color:black;"), fluidRow(
-        box(width = 12, dataTableOutput("grades_full"))
-      )
+    tabPanel("Students",
+             br(),
+      fluidRow(
+        box(width = 12, status = "primary", solidHeader = TRUE,dataTableOutput("grades_full"))
     )),
     tabPanel(
-      "Summary Statistics",
+      "Unit Information",
+      br(),
       box(
         status = "primary", width = 12, solidHeader = TRUE,
         fluidRow(column(6,
-          align = "center", plotOutput("unit_performance")
+          align = "center", plotOutput("unit_performance")),
+        column(6,
+               align = "center", dataTableOutput("unit_assessment_info")
         ))
       )
     ),
     tabPanel(
-      "Percentile Student",
-      box(
-        status = "primary", width = 12, solidHeader = TRUE, height = "600px",
-        fluidRow(box(width = 12, dataTableOutput("percentile")))
+      "Summary Statistics",
+
+      br(),
+        fluidRow(
+        column(4,selectInput(
+            width = "40%",
+            "percentile",
+            "Select Percentile",
+            c("25", "50", "75","95"),
+            selected = "50"
+          )),
+        column(4,varSelectInput(
+            width = "40%",
+            "assessment",
+            "Select Assessment",
+            staff_student_grades_final%>%select(-c(email,`Total Marks Obtained`)),
+            selected = "ASSESS 1"
+          ))),
+
+     fluidRow(box(
+       status = "primary", width = 12, solidHeader = TRUE, dataTableOutput("percentile_list_students"))
+          )
+          )
       )
     )
-  )
-)
+
 
 

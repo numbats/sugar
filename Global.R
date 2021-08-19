@@ -1,3 +1,13 @@
+library(shiny)
+library(fullcalendar)
+library(shinydashboard)
+library(DT)
+library(shinyWidgets)
+library(shinyjs)
+library(googlesheets4)
+library(tidyverse)
+library(googleAuthR)
+library(monash)
 
 # google credentials & scopes
 
@@ -79,10 +89,10 @@ pivot_date <- lecn %>%
   ),
   date=paste0(date,"/2021"),
   color=case_when(
-    attendance == "P" ~ "green",
-    attendance == "A" ~ "orange",
-    attendance == "E" ~ "blue",
-    attendance == "U" ~ "red"
+    attendance == "P" ~ "#107e3e",
+    attendance == "A" ~ "#e9730c",
+    attendance == "E" ~ "#0a6ed1",
+    attendance == "U" ~ "#bb0000"
   ))
 
 
@@ -120,10 +130,10 @@ tutpatn_date <- tutpatn_new %>%
   ),
   date=paste0(date,"/2021"),
   color=case_when(
-    attendance == "P" ~ "green",
-    attendance == "A" ~ "orange",
-    attendance == "E" ~ "blue",
-    attendance == "U" ~ "red"
+    attendance == "P" ~ "#107e3e",
+    attendance == "A" ~ "#e9730c",
+    attendance == "E" ~ "#0a6ed1",
+    attendance == "U" ~ "#bb0000"
   ))
 
 tutpatn <- tutpatn_date%>%
@@ -158,10 +168,10 @@ tutshern_date <- tutshern_new %>%
   ),
   date=paste0(date,"/2021"),
   color=case_when(
-    attendance == "P" ~ "green",
-    attendance == "A" ~ "orange",
-    attendance == "E" ~ "blue",
-    attendance == "U" ~ "red"
+    attendance == "P" ~ "#107e3e",
+    attendance == "A" ~ "#e9730c",
+    attendance == "E" ~ "#0a6ed1",
+    attendance == "U" ~ "#bb0000"
   ))
 
 
@@ -177,7 +187,11 @@ tutshern <- tutshern_date%>%
     `Unexcused absence` = max(`Unexcused absence`)
   )
 
+`%notin%` <- Negate(`%in%`)
+authorised_list <- as.tibble(c(pivot$email, "aarathy.babu@monash.edu"))
 
+# Assessment Info
+assessment_info <- read_sheet(grade, sheet = 3)
 
 ## Grade
 gradedf <- read_sheet(grade, sheet = 2, skip = 1)
@@ -192,3 +206,23 @@ grades_list <- graden %>%
 n_students <- grades_list%>%
   filter(!is.na(email))%>%
   nrow()
+
+staff_student_grades <- grades_list %>%
+  filter(!is.na(email))
+
+staff_grades_prefinal<- staff_student_grades%>%
+ pivot_longer(cols = `ASSESS 1`:PRESENTATION, values_to = "Obtained Marks",names_to = "Assessment")%>%
+  left_join(assessment_info,by="Assessment")%>%
+  mutate(Obtained_Percentage=(`Obtained Marks`/`Total Marks`)*Weightage)%>%
+  select(email,Assessment,`Obtained Marks`,Obtained_Percentage)
+
+staff_student_grades_final<- staff_grades_prefinal%>%
+ group_by(email)%>%
+  mutate(Total=sum(Obtained_Percentage))%>%
+  select(email,Assessment,`Obtained Marks`,Total)%>%
+  pivot_wider(email:Total,names_from = "Assessment",values_from = `Obtained Marks`)%>%
+  rename(`Total Marks Obtained` = "Total")%>%
+  ungroup()
+
+
+

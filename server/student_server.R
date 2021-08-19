@@ -146,7 +146,7 @@ student_grade_show <- reactive({
 
 output$student_user_grades <- DT::renderDataTable({
   grade_table <- student_grade_show()
-  datatable(grade_table, selection = "single", options = list(dom = "ft", initComplete = JS(
+  datatable(grade_table, selection = "single", options = list(pageLength = 10,initComplete = JS(
     "function(settings, json) {",
     "$(this.api().table().header()).css({'background-color': '#006DAE', 'color': '#fff'});",
     "}"
@@ -159,10 +159,10 @@ output$student_user_grades <- DT::renderDataTable({
 
 output$histogram <- renderPlot({
   if (n_students > 15) {
-    if (is.null(input$results2_rows_selected) == TRUE) {
+    if (is.null(input$student_user_grades_rows_selected) == TRUE) {
       assessment_type <- "ASSESS 1"
     } else {
-      selected <- input$results2_rows_selected
+      selected <- input$student_user_grades_rows_selected
       grade_table <- student_grade_show()
       grade_table$ID <- seq.int(nrow(grade_table))
       assessment_type <- grade_table %>%
