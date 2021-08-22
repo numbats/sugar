@@ -1,0 +1,14 @@
+name: sugar-demo-app
+title: sugar-demo-app
+username:
+account: ebsmonash
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4520856
+bundleId: 4950241
+url: https://ebsmonash.shinyapps.io/sugar-demo-app/
+when: 1629631845.2468
+lastSyncTime: 1629631845.2468
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: demo.R|demoglob.R|key.json|README.md

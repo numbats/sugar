@@ -2,35 +2,6 @@
 
 ## Student Attendance Calender
 
-output$calendar <- renderFullcalendar({
-  if (input$type == "Lecture") {
-
-    # Calender_lecture
-    cal_date <- pivot_date %>%
-      filter(`Student Email` == as.character(userDetails())) %>%
-      drop_na()
-  } else {
-    if (as.character(userDetails()) %in% tutpatn$email) {
-      cal_date <- tutpatn_date %>%
-        filter(`Student Email` == as.character(userDetails())) %>%
-        drop_na()
-    } else {
-      cal_date <- tutshern_date %>%
-        filter(`Student Email` == as.character(userDetails())) %>%
-        drop_na()
-    }
-  }
-
-  data <- data.frame(
-    title = cal_date$attendance,
-    start = c(as.Date(unique(cal_date$date), "%d/%m/%Y")),
-    end = c(as.Date(unique(cal_date$date), "%d/%m/%Y")),
-    color = c(cal_date$color)
-  )
-  fullcalendar(data)
-})
-
-
 
 ## Present ValueBox
 

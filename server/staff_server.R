@@ -73,33 +73,4 @@ output$unit_assessment_info <- DT::renderDataTable({
 })
 
 
-output$percentile_list_students <- DT::renderDataTable({
-
-percentile_full_list<- staff_student_grades_final%>%
-    pivot_longer(cols = 3:ncol(staff_student_grades_final), names_to = "Assessment", values_to = "Marks")%>%
-    group_by(Assessment)%>%
-    summarise(Threshold = quantile(Marks, c(0.25, 0.5, 0.75,0.95)), quantile = c(25, 50, 75,95))%>%
-  mutate(threshold_marks=as.numeric(Threshold))%>%
-  ungroup()
-
-percentile_threshold_list <- percentile_full_list%>%
-  filter((Assessment==as.character(quote(!!input$assessment)))&(quantile==as.numeric(input$percentile)))%>%
-  pull(as.numeric(threshold_marks))
-
-
-students_below_percentile <- staff_student_grades_final%>%
-  filter((!!input$assessment<percentile_threshold_list))
-
-
-datatable(students_below_percentile %>%
-            arrange(!!input$assessment),caption = paste0( "Students below \n",as.character(input$percentile),"\nPercentile") ,options = list(
-              pageLength = 10,initComplete = JS(
-                "function(settings, json) {",
-                "$(this.api().table().header()).css({'background-color': '#006DAE', 'color': '#fff'});",
-                "}"
-              )))%>%
-  formatStyle(2, backgroundColor = JS("value < 49 ? 'red' : 'lightgreen'"))
-})
-
-
 

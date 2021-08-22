@@ -263,7 +263,7 @@ server <- function(input, output, session) {
     if (USER$login) {
       shinyjs::onclick(
         "gauth_login-googleAuthUi",
-        shinyjs::runjs("window.location.href = 'http://127.0.0.1:4549';")
+        shinyjs::runjs("window.location.href = 'https://ebsmonash.shinyapps.io/sugar-demo-app/';")
       )
     }
   })
@@ -276,9 +276,9 @@ server <- function(input, output, session) {
   observeEvent(input$back, {
     shinyjs::onclick(
       "back",
-      shinyjs::runjs("window.location.href = 'http://127.0.0.1:4549';")
+      shinyjs::runjs("window.location.href = 'https://ebsmonash.shinyapps.io/sugar-demo-app/';")
     )
   })
 }
 
-runApp(list(ui = ui, server = server),port = 4549)
+shinyApp(ui = ui, server = server)

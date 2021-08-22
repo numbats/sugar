@@ -59,19 +59,13 @@ first_tab <- tabItem(
       ),
       fluidRow(
         br(),
-        column(5,
-          align = "center",
-          fullcalendarOutput("calendar", width = "100%", height = "100%")
-        ),
-        column(5,
-          offset = 1,
+        column(10,
+               offset=1,
           fluidRow(
-            valueBoxOutput("present", width = 6),
-            valueBoxOutput("absent", width = 6)
-          ),
-          fluidRow(
-            valueBoxOutput("excused", width = 6),
-            valueBoxOutput("unexcused", width = 6)
+            valueBoxOutput("present", width = 3),
+            valueBoxOutput("absent", width = 3),
+            valueBoxOutput("excused", width = 3),
+            valueBoxOutput("unexcused", width = 3)
           )
         )
 
@@ -156,32 +150,8 @@ staff_second_tab <- tabItem(
         column(6,
                align = "center", dataTableOutput("unit_assessment_info")
         ))
-      )
-    ),
-    tabPanel(
-      "Summary Statistics",
+      ))
 
-      br(),
-        fluidRow(
-        column(4,selectInput(
-            width = "40%",
-            "percentile",
-            "Select Percentile",
-            c("25", "50", "75","95"),
-            selected = "50"
-          )),
-        column(4,varSelectInput(
-            width = "40%",
-            "assessment",
-            "Select Assessment",
-            staff_student_grades_final%>%select(-c(email,`Total Marks Obtained`)),
-            selected = "ASSESS 1"
-          ))),
-
-     fluidRow(box(
-       status = "primary", width = 12, solidHeader = TRUE, dataTableOutput("percentile_list_students"))
-          )
-          )
       )
     )
 
@@ -207,19 +177,12 @@ view_first_tab <- tabItem(
       ),
       fluidRow(
         br(),
-        column(5,
-               align = "center",
-               fullcalendarOutput("calendar", width = "100%", height = "100%")
-        ),
-        column(5,
-               offset = 1,
+        column(10,offset=1,
                fluidRow(
-                 valueBoxOutput("present", width = 6),
-                 valueBoxOutput("absent", width = 6)
-               ),
-               fluidRow(
-                 valueBoxOutput("excused", width = 6),
-                 valueBoxOutput("unexcused", width = 6)
+                 valueBoxOutput("present", width = 3),
+                 valueBoxOutput("absent", width = 3),
+                 valueBoxOutput("excused", width = 3),
+                 valueBoxOutput("unexcused", width = 3)
                )
         )
 
