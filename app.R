@@ -6,11 +6,10 @@ library(shinyjs)
 library(googlesheets4)
 library(tidyverse)
 library(googleAuthR)
-
+library(formattable)
 
 source("Global.R")
 source("tabs.R")
-
 
 
 
@@ -30,7 +29,8 @@ server <- function(input, output, session) {
   USER <- reactiveValues(login = FALSE)
 
   # Google Authentication
-  accessToken <- callModule(googleAuth, "gauth_login",
+  accessToken <- callModule(
+    googleAuth, "gauth_login",
     login_text = "Sign in via Google",
     logout_text = "Sign Out",
     login_class = "btn btn-success",

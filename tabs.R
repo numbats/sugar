@@ -15,8 +15,6 @@ landing_page <- fluidRow(
   column(12, googleAuthUI("gauth_login"), align = "center")
 )
 `%notin%` <- Negate(`%in%`)
-authorised_list <- as.tibble(c(pivot$email, "aarathy.babu@monash.edu","emi.tanaka@monash.edu"))
-
 
 
 # Error page for unauthorized access
@@ -124,6 +122,7 @@ staff_first_tab <- tabItem(
         c("Lecture", "Tutorial A", "Tutorial B"),
         selected = NULL
       ),
+      div(style="text-align: right;",downloadButton("downloadattendance", "Download Data")),
       box(width = 12, dataTableOutput("attendance_list"))
     )
   )
@@ -138,6 +137,7 @@ staff_second_tab <- tabItem(
     tabPanel("Students",
              br(),
       fluidRow(
+        div(style="text-align: right;",downloadButton("downloadgrades", "Download Data")),
         box(width = 12, status = "primary", solidHeader = TRUE,dataTableOutput("grades_full"))
     )),
     tabPanel(

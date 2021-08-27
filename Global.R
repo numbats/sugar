@@ -49,12 +49,16 @@ sheet <- tryCatch(
     )
     lec <- gs4_get("125VrIIShEBJ2Xp5YgkzZN3uT-lxg_5c9C5nCgYYlv3M")
     grade <- gs4_get("1lvy0z2i47WziTQW8Nfj3Jv7dntH_uhVfvah-9iBlK7c")
+    authorization <- gs4_get("1pNLs24OMa6DahPp5bZUHkTfv1hCFZTAwbO2vI5qzKFE")
   },
   error = function(e) {
     message("Access has not been granted, please try again in 5 minutes.")
     return(NULL)
   }
 )
+
+
+
 
 # Lecture attendance
 
@@ -176,8 +180,17 @@ tutshern <- tutshern_date%>%
     `Unexcused absence` = max(`Unexcused absence`)
   )
 
+
+#authorization list
+
+auth_list <- read_sheet(authorization)
+
+authorised_list <- as_tibble(c(pivot$email,auth_list$Email))
+
+
+
+
 `%notin%` <- Negate(`%in%`)
-authorised_list <- as.tibble(c(pivot$email, "aarathy.babu@monash.edu","emi.tanaka@monash.edu"))
 
 # Assessment Info
 assessment_info <- read_sheet(grade, sheet = 2)
@@ -200,8 +213,9 @@ staff_student_grades <- grades_list %>%
 staff_grades_prefinal<- staff_student_grades%>%
   pivot_longer(cols = `ASSESS 1`:PRESENTATION, values_to = "Obtained Marks",names_to = "Assessment")%>%
   left_join(assessment_info,by="Assessment")%>%
-  mutate(Obtained_Percentage=(`Obtained Marks`/`Total Marks`)*Weightage)%>%
-  select(email,Assessment,`Obtained Marks`,Obtained_Percentage)
+  mutate(Obtained_Percentage=(`Obtained Marks`/`Total Marks`)*Weightage,
+         Percentage= (`Obtained Marks`/`Total Marks`)*100  )%>%
+  select(email,Assessment,`Obtained Marks`,Percentage,Obtained_Percentage)
 
 staff_student_grades_final<- staff_grades_prefinal%>%
   group_by(email)%>%
@@ -212,4 +226,15 @@ staff_student_grades_final<- staff_grades_prefinal%>%
   ungroup()
 
 
+obt_percent<- staff_grades_prefinal%>%
+  select(-c(`Obtained Marks`,Obtained_Percentage))%>%
+  pivot_wider(email:Percentage,
+              names_from = "Assessment",
+              values_from = "Percentage")
 
+
+full_student_grades_list<- staff_student_grades_final%>%
+  left_join(obt_percent,by="email")
+
+
+colnames(full_student_grades_list)<-gsub(".x","",colnames(full_student_grades_list))
