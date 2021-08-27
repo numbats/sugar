@@ -5,10 +5,10 @@ account: ebsmonash
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 4520856
-bundleId: 4950241
+bundleId: 4969986
 url: https://ebsmonash.shinyapps.io/sugar-demo-app/
-when: 1629631845.2468
-lastSyncTime: 1629631845.2468
+when: 1630037560.638
+lastSyncTime: 1630037560.638
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: demo.R|demoglob.R|key.json|README.md
+ignoredFiles: test.R
