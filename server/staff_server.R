@@ -67,7 +67,7 @@ output$unit_performance <- renderPlot({
     drop_na() %>%
     pivot_longer(cols = `ASSESS 1`:PRESENTATION, names_to = "Assessment", values_to = "Marks") %>%
     ggplot(aes(x = Assessment, y = Marks)) +
-    geom_boxplot(fill="#006DAE") +
+    geom_quasirandom(fill="#006DAE") +
     theme_bw() +
     labs(
       title = "Marks Distribution of Unit Assessments",

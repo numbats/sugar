@@ -7,6 +7,7 @@ library(googlesheets4)
 library(tidyverse)
 library(googleAuthR)
 library(formattable)
+library(ggbeeswarm)
 
 source("Global.R")
 source("tabs.R")
