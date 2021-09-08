@@ -1,0 +1,18 @@
+Package: sugar
+Title: Shiny Unit Grade and Attendance Reviewer
+Version: 0.0.0.9000
+Authors@R: 
+     c(person(given = "Emi",
+           family = "Tanaka",
+           role = c("aut", "cre"),
+           email = "emi.tanaka@monash.edu"),
+      person(given = "Aarathy", 
+             family = "Babu", 
+             email = "aarathybabu907@gmail.com", 
+             role = "aut"))
+Description: Shiny Unit Grade and Attendance Reviewer, or SUGAR, is a shiny web app that allows students to see their grade and attendance of a unit.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
