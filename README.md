@@ -11,7 +11,7 @@ that allows students to see their grade and attendance of a unit.
 
 ## Installation
 
-And the development version from [GitHub](https://github.com/) with:
+Install the package from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")

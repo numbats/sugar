@@ -23,8 +23,7 @@ Shiny Unit Grade and Attendance Reviewer, or SUGAR, is a shiny web app that allo
 ## Installation
 
 
-
-And the development version from [GitHub](https://github.com/) with:
+Install the package from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
