@@ -10,5 +10,5 @@ create_attendance_sheet(code, schedule)
 \item{assessment}{A tibble with columns "Assessment" that depicts the name of the assessment, "Weightage" depicts the weightage of the assessment and "Total Marks" is the total marks alloted for the assessment.}
 }
 \description{
-Functions to create a google sheets for storing information on Students, Attendance, Grade and Authorisation list.
+Function to create a google sheets for storing information on attendance of students.
 }

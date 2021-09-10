@@ -10,5 +10,5 @@ create_student_sheet(code)
 \item{code}{The Unit Code}
 }
 \description{
-Functions to create a google sheets for storing information on Students.
+Function to create a google sheets for storing information on Students.
 }

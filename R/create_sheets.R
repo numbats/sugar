@@ -1,6 +1,6 @@
 #' Create skeleton of Google Sheet for student
 #'
-#' Functions to create a google sheets for storing information on Students.
+#' Function to create a google sheets for storing information on Students.
 #' @param code The Unit Code
 #' @export
 create_student_sheet <- function(code) {
@@ -13,7 +13,7 @@ create_student_sheet <- function(code) {
 
 #' Create skeleton of Google Sheet for Attendance
 #'
-#' Functions to create a google sheets for storing information on Students, Attendance, Grade and Authorisation list.
+#' Function to create a google sheets for storing information on attendance of students.
 #' @param assessment A tibble with columns "Assessment" that depicts the name of the assessment, "Weightage" depicts the weightage of the assessment and "Total Marks" is the total marks alloted for the assessment.
 #' @export
 create_attendance_sheet <- function(code, schedule) {
@@ -37,7 +37,7 @@ create_attendance_sheet <- function(code, schedule) {
 
 #' Create skeleton of Google Sheet for Assessment Grades
 #'
-#' Functions to create a google sheets for storing information on Grade.
+#' Function to create a google sheets for storing information on Grade.
 #' @param schedule A tibble with columns "Class","StartDate","EndDate","By" where "Class" depicts the type of class ie.Lecture A, Lecture B, Tutorial A, Tutorial B etc. "StartDate" and "EndDate" depicts the date of start and end of the class in the semester. "By" depicts the number of classes in a week.
 #' @export
 create_grade_sheet <- function(code, assessment) {
@@ -52,4 +52,20 @@ create_grade_sheet <- function(code, assessment) {
   grades <- grades %>%
     googlesheets4::sheet_write(data = grade_info, sheet = "Grades") %>%
     googlesheets4::sheet_write(data = assessment, sheet = "Assessment Information")
+}
+
+#' Create skeleton of Google Sheet for Authorisation for web application access
+#'
+#' Functions to create a google sheets for storing information on the faculty members authorized to access the web application.
+#' @export
+create_authorization_sheet <- function(code, assessment) {
+
+
+  tbl_colnames <- c("Faculty Email")
+
+  authorized_list <- tbl_colnames %>%
+    rlang::rep_named(list(logical())) %>%
+    tibble::as_tibble()
+  authorized <- googlesheets4::gs4_create(paste(code, "Access Authorization", sep = " "), sheets = authorized_list)
+
 }
