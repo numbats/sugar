@@ -2,10 +2,13 @@
 % Please edit documentation in R/create_sheets.R
 \name{create_student_sheet}
 \alias{create_student_sheet}
-\title{Create skeleton of Google Sheets}
+\title{Create skeleton of Google Sheet for student}
 \usage{
-create_student_sheet()
+create_student_sheet(code)
+}
+\arguments{
+\item{code}{The Unit Code}
 }
 \description{
-Functions to create a google sheets for storing information on Attendance, Grade and Authorisation list.
+Functions to create a google sheets for storing information on Students.
 }
