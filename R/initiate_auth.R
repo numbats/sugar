@@ -11,6 +11,7 @@ options(gargle_oauth_cache = ".secrets")
 # check the value of the option, if you like
 gargle::gargle_oauth_cache()
 
+
 # trigger auth on purpose --> store a token in the specified cache
 # a broswer will be opened
 googlesheets4::gs4_auth()
@@ -23,8 +24,9 @@ googlesheets4::gs4_deauth()
 googlesheets4::gs4_auth(
   cache = ".secrets",
   email = as.character(email),
-  scopes = "https://www.googleapis.com/auth/spreadsheets"
+  scopes = "https://www.googleapis.com/auth/spreadsheets",
+  token = "authentication.rds"
 )
-
+saveRDS(googlesheets4::gs4_auth(), here::here(("app/authentication.rds")))
 
 }

@@ -7,7 +7,7 @@
 #'
 #' @export
 launch_app <- function() {
-  appDir <- system.file("app","app.R", package = "sugar")
+  appDir <- (here::here("app","app.R"))
   if (appDir == "") {
     stop("Could not find app directory. Try re-installing `sugar`.", call. = FALSE)
   }

@@ -1,3 +1,4 @@
+
 library(shiny)
 library(shinydashboard)
 library(DT)
@@ -9,18 +10,13 @@ library(googleAuthR)
 library(formattable)
 library(ggbeeswarm)
 
+source("userinput.R")
 source("Global.R")
 source("tabs.R")
 
 
 
-# DASHBOARD UI & SERVER
 
-header <- dashboardHeader(title = "ETCXXXX")
-
-sidebar <- dashboardSidebar(shinyjs::useShinyjs(), uiOutput("sidebarpanel"))
-body <- dashboardBody(shinyjs::useShinyjs(), uiOutput("body"))
-ui <- dashboardPage(header, sidebar, body, skin = "blue")
 
 
 # SERVER FUNCTION
@@ -258,28 +254,7 @@ server <- function(input, output, session) {
 
   })
 
-  # LOG OUT SERVER FUNCTION
-
-  observe({
-    if (USER$login) {
-      shinyjs::onclick(
-        "gauth_login-googleAuthUi",
-        shinyjs::runjs("window.location.href = 'https://ebsmonash.shinyapps.io/sugar-demo-app/';")
-      )
-    }
-  })
-
-
-
-
-  # UNAUTHORIZED ACCESS
-
-  observeEvent(input$back, {
-    shinyjs::onclick(
-      "back",
-      shinyjs::runjs("window.location.href = 'https://ebsmonash.shinyapps.io/sugar-demo-app/';")
-    )
-  })
+  source(file.path("userinput.R"),  local = TRUE)$value
 }
 
 shinyApp(ui = ui, server = server)
