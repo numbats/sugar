@@ -5,25 +5,25 @@
 
 ## Present ValueBox
 
+# student_individual_attendance <- all_class_attendance %>%
+#   filter(!is.na(`Student Email`))%>%
+#   filter(`Student Email`== as.character(userDetails()))
+
+# select_class_attendance <- all_class_attendance %>%
+#   filter(!is.na(`Student Email`)) %>%
+#   filter(Class == input$type)
+
+
 output$present <- renderValueBox({
-  if (input$type == "Lecture") {
-    presentnum <- pivot %>%
-      filter(email == as.character(userDetails())) %>%
+ present_data<- all_class_attendance%>%
+   filter(`Student Email` == as.character(userDetails())) %>%
+    filter(Class == input$type)%>%
       pull(Present)
-  } else {
-    if (as.character(userDetails()) %in% tutpatn$email) {
-      presentnum <- tutpatn %>%
-        filter(email == as.character(userDetails())) %>%
-        pull(Present)
-    } else {
-      presentnum <- tutshern %>%
-        filter(email == as.character(userDetails())) %>%
-        pull(Present)
-    }
-  }
+
+
 
   valueBox(
-    paste0(presentnum), "Present",
+    paste0(present_data), "Present",
     color = "light-blue"
   )
 })
@@ -31,24 +31,14 @@ output$present <- renderValueBox({
 ## Absent  ValueBox
 
 output$absent <- renderValueBox({
-  if (input$type == "Lecture") {
-    absentnum <- pivot %>%
-      filter(email == as.character(userDetails())) %>%
-      pull(`Away for portion`)
-  } else {
-    if (as.character(userDetails()) %in% tutpatn$email) {
-      absentnum <- tutpatn %>%
-        filter(email == as.character(userDetails())) %>%
+  absent_data<- all_class_attendance%>%
+    filter(`Student Email` == as.character(userDetails())) %>%
+    filter(Class == input$type)%>%
         pull(`Away for portion`)
-    } else {
-      absentnum <- tutshern %>%
-        filter(email == as.character(userDetails())) %>%
-        pull(`Away for portion`)
-    }
-  }
+
 
   valueBox(
-    paste0(absentnum), "Absent",
+    paste0(absent_data), "Away From Portion",
     color = "light-blue"
   )
 })
@@ -56,24 +46,15 @@ output$absent <- renderValueBox({
 ## Excused ValueBox
 
 output$excused <- renderValueBox({
-  if (input$type == "Lecture") {
-    excusednum <- pivot %>%
-      filter(email == as.character(userDetails())) %>%
-      pull(`Excused absence`)
-  } else {
-    if (as.character(userDetails()) %in% tutpatn$email) {
-      excusednum <- tutpatn %>%
-        filter(email == as.character(userDetails())) %>%
-        pull(`Excused absence`)
-    } else {
-      excusednum <- tutshern %>%
-        filter(email == as.character(userDetails())) %>%
-        pull(`Excused absence`)
-    }
-  }
+  excused_data<- all_class_attendance%>%
+    filter(`Student Email` == as.character(userDetails())) %>%
+    filter(Class == input$type)%>%
+
+        pull(`Excused Absence`)
+
 
   valueBox(
-    paste0(excusednum), "Excused Absence",
+    paste0(excused_data), "Excused Absence",
     color = "light-blue"
   )
 })
@@ -81,24 +62,14 @@ output$excused <- renderValueBox({
 ## Unexcused ValueBox
 
 output$unexcused <- renderValueBox({
-  if (input$type == "Lecture") {
-    unexcusednum <- pivot %>%
-      filter(email == as.character(userDetails())) %>%
-      pull(`Unexcused absence`)
-  } else {
-    if (as.character(userDetails()) %in% tutpatn$email) {
-      unexcusednum <- tutpatn %>%
-        filter(email == as.character(userDetails())) %>%
-        pull(`Unexcused absence`)
-    } else {
-      unexcusednum <- tutshern %>%
-        filter(email == as.character(userDetails())) %>%
-        pull(`Unexcused absence`)
-    }
-  }
+  unexcused_data<- all_class_attendance%>%
+    filter(`Student Email` == as.character(userDetails())) %>%
+    filter(Class == input$type)%>%
+        pull(`Unexcused Absence`)
+
 
   valueBox(
-    paste0(unexcusednum), "Unexcused Absence",
+    paste0(unexcused_data), "Unexcused Absence",
     color = "light-blue"
   )
 })
@@ -106,10 +77,10 @@ output$unexcused <- renderValueBox({
 ## Retrieval of Marks of Student User
 
 student_grade_show <- reactive({
-  grade_student <- grades_list %>%
-    filter(email == as.character(userDetails())) %>%
-    pivot_longer(cols = `ASSESS 1`:PRESENTATION, names_to = "Assessment", values_to = "Marks") %>%
-    select(-email)
+  grade_student <- staff_student_grades%>%
+    filter(`Student Email` == as.character(userDetails())) %>%
+    pivot_longer(cols = c(!`Student Email`), names_to = "Assessment", values_to = "Marks") %>%
+    select(-`Student Email`)
   return(grade_student)
 })
 
@@ -131,7 +102,7 @@ output$student_user_grades <- DT::renderDataTable({
 output$histogram <- renderPlot({
   if (n_students > 15) {
     if (is.null(input$student_user_grades_rows_selected) == TRUE) {
-      assessment_type <- "ASSESS 1"
+      assessment_type <- colnames(staff_student_grades[2])
     } else {
       selected <- input$student_user_grades_rows_selected
       grade_table <- student_grade_show()
@@ -141,9 +112,9 @@ output$histogram <- renderPlot({
         pull(Assessment)
     }
     grade_table <- student_grade_show()
-    total_marks_assessment <- grades_list %>%
+    total_marks_assessment <- staff_student_grades %>%
       drop_na() %>%
-      pivot_longer(cols = `ASSESS 1`:PRESENTATION, names_to = "Assessment", values_to = "Marks") %>%
+      pivot_longer(cols =  c(!`Student Email`) , names_to = "Assessment", values_to = "Marks") %>%
       filter(Assessment == as.character(assessment_type))
 
     max_count <- total_marks_assessment %>%

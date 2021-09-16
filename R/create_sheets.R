@@ -14,11 +14,11 @@ create_student_sheet <- function(code) {
 #' Create skeleton of Google Sheet for Attendance
 #'
 #' Function to create a google sheets for storing information on attendance of students.
-#' @param assessment A tibble with columns "Assessment" that depicts the name of the assessment, "Weightage" depicts the weightage of the assessment and "Total Marks" is the total marks alloted for the assessment.
+#' @param schedule A tibble with columns "Class","StartDate" and "EndDate" where "Class" depicts the type of class ie.Lecture A, Lecture B, Tutorial A, Tutorial B etc. "StartDate" and "EndDate" depicts the date of start and end of the class in the semester.
 #' @export
 create_attendance_sheet <- function(code, schedule) {
 
-  attendance <- googlesheets4::gs4_create(paste(code, "Attendance", sep = " "), sheets = unique(schedule$Class))
+  attendance <- googlesheets4::gs4_create(paste(code, "Attendance", sep = ""), sheets = unique(schedule$Class))
 
   for (i in 1:length(unique(schedule$Class))) {
 
@@ -38,11 +38,11 @@ create_attendance_sheet <- function(code, schedule) {
 #' Create skeleton of Google Sheet for Assessment Grades
 #'
 #' Function to create a google sheets for storing information on Grade.
-#' @param schedule A tibble with columns "Class","StartDate","EndDate","By" where "Class" depicts the type of class ie.Lecture A, Lecture B, Tutorial A, Tutorial B etc. "StartDate" and "EndDate" depicts the date of start and end of the class in the semester. "By" depicts the number of classes in a week.
+#' @param assessment A tibble with columns "Assessment" that depicts the name of the assessment, "Weightage" depicts the weightage of the assessment and "Total Marks" is the total marks alloted for the assessment.
 #' @export
 create_grade_sheet <- function(code, assessment) {
 
-  grades <- googlesheets4::gs4_create(paste(code, "Grade", sep = " "), sheets = c("Grades", "Assessment Information"))
+  grades <- googlesheets4::gs4_create(paste(code, "Grade", sep = ""), sheets = c("Grades", "Assessment Information"))
    tbl_colnames <- c("Student Email", c(assessment$Assessment))
 
   grade_info <- tbl_colnames %>%
@@ -66,6 +66,6 @@ create_authorization_sheet <- function(code, assessment) {
   authorized_list <- tbl_colnames %>%
     rlang::rep_named(list(logical())) %>%
     tibble::as_tibble()
-  authorized <- googlesheets4::gs4_create(paste(code, "Access Authorization", sep = " "), sheets = authorized_list)
+  authorized <- googlesheets4::gs4_create(paste(code, "Access Authorization", sep = ""), sheets = authorized_list)
 
 }

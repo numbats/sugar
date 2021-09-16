@@ -1,24 +1,22 @@
 
 # google credentials & scopes
 
-# options(googleAuthR.scopes.selected = c(
+#
+#
+# # set the scopes required
+# scopes <- c(
 #   "https://www.googleapis.com/auth/userinfo.email",
 #   "https://www.googleapis.com/auth/userinfo.profile"
-# ))
+# )
 #
-#
-# options("googleAuthR.webapp.client_id" = "1044705167382-idbbqfmpian2ea30gmdc2alktbt133ou.apps.googleusercontent.com")
-# options("googleAuthR.webapp.client_secret" = "1EvRhB6JovB_fxON8cuKx6lz")
-#
+# # set the client
+# gar_set_client(scopes = scopes, activate = "web")
 
-# set the scopes required
-scopes <- c(
+options(googleAuthR.scopes.selected = c(
   "https://www.googleapis.com/auth/userinfo.email",
   "https://www.googleapis.com/auth/userinfo.profile"
-)
+))
 
-# set the client
-gar_set_client(scopes = scopes, activate = "web")
 
 # Function for retrieving email id
 

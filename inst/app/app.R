@@ -17,8 +17,6 @@ source("tabs.R")
 
 
 
-
-
 # SERVER FUNCTION
 
 server <- function(input, output, session) {
@@ -254,7 +252,30 @@ server <- function(input, output, session) {
 
   })
 
-  source(file.path("userinput.R"),  local = TRUE)$value
-}
 
-shinyApp(ui = ui, server = server)
+  # Provide your shinyapp.io link
+
+  # LOG OUT SERVER FUNCTION
+
+  observe({
+    shinyjs::onclick(
+      "gauth_login-googleAuthUi",
+      shinyjs::runjs("window.location.href = 'https://ebsmonash.shinyapps.io/sugar-demo-app/';")
+    )
+  })
+
+
+
+
+  # UNAUTHORIZED ACCESS
+
+  observeEvent(input$back, {
+    shinyjs::onclick(
+      "back",
+      shinyjs::runjs("window.location.href = 'https://ebsmonash.shinyapps.io/sugar-demo-app/';")
+    )
+  })
+
+}
+shinyApp(ui=ui,server=server)
+#shinyApp(ui = ui, server = server)

@@ -7,7 +7,7 @@
 create_grade_sheet(code, assessment)
 }
 \arguments{
-\item{schedule}{A tibble with columns "Class","StartDate","EndDate","By" where "Class" depicts the type of class ie.Lecture A, Lecture B, Tutorial A, Tutorial B etc. "StartDate" and "EndDate" depicts the date of start and end of the class in the semester. "By" depicts the number of classes in a week.}
+\item{assessment}{A tibble with columns "Assessment" that depicts the name of the assessment, "Weightage" depicts the weightage of the assessment and "Total Marks" is the total marks alloted for the assessment.}
 }
 \description{
 Function to create a google sheets for storing information on Grade.

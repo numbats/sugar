@@ -7,5 +7,5 @@
 create_app_skeleton()
 }
 \description{
-Function to set up app skeleton
+Function to set up app skeleton.
 }

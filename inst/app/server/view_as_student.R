@@ -2,33 +2,19 @@
 
 ## Student Attendance Calender
 
-example_student <- sample(pivot_date$`Student Email`,1)
+example_student <- sample(unique(all_class_attendance$`Student Email`),1)
 
-
-
-
-
-## Present ValueBox
 
 output$present <- renderValueBox({
-  if (input$type == "Lecture") {
-    presentnum <- pivot %>%
-      filter(email == as.character(example_student)) %>%
-      pull(Present)
-  } else {
-    if (as.character(example_student) %in% tutpatn$email) {
-      presentnum <- tutpatn %>%
-        filter(email == as.character(example_student)) %>%
-        pull(Present)
-    } else {
-      presentnum <- tutshern %>%
-        filter(email == as.character(example_student)) %>%
-        pull(Present)
-    }
-  }
+  present_data<- all_class_attendance%>%
+    dplyr::filter(`Student Email`== as.character(example_student)) %>%
+    dplyr::filter(Class == input$type)%>%
+    pull(Present)
+
+
 
   valueBox(
-    paste0(presentnum), "Present",
+    paste0(present_data), "Present",
     color = "light-blue"
   )
 })
@@ -36,24 +22,14 @@ output$present <- renderValueBox({
 ## Absent  ValueBox
 
 output$absent <- renderValueBox({
-  if (input$type == "Lecture") {
-    absentnum <- pivot %>%
-      filter(email == as.character(example_student)) %>%
-      pull(`Away for portion`)
-  } else {
-    if (as.character(example_student) %in% tutpatn$email) {
-      absentnum <- tutpatn %>%
-        filter(email == as.character(example_student)) %>%
-        pull(`Away for portion`)
-    } else {
-      absentnum <- tutshern %>%
-        filter(email == as.character(example_student)) %>%
-        pull(`Away for portion`)
-    }
-  }
+  absent_data<- all_class_attendance%>%
+    dplyr::filter(`Student Email`== as.character(example_student)) %>%
+    dplyr::filter(Class == input$type)%>%
+    pull(`Away for portion`)
+
 
   valueBox(
-    paste0(absentnum), "Absent",
+    paste0(absent_data), "Away From Portion",
     color = "light-blue"
   )
 })
@@ -61,24 +37,15 @@ output$absent <- renderValueBox({
 ## Excused ValueBox
 
 output$excused <- renderValueBox({
-  if (input$type == "Lecture") {
-    excusednum <- pivot %>%
-      filter(email == as.character(example_student)) %>%
-      pull(`Excused absence`)
-  } else {
-    if (as.character(example_student) %in% tutpatn$email) {
-      excusednum <- tutpatn %>%
-        filter(email == as.character(example_student)) %>%
-        pull(`Excused absence`)
-    } else {
-      excusednum <- tutshern %>%
-        filter(email == as.character(example_student)) %>%
-        pull(`Excused absence`)
-    }
-  }
+  excused_data<- all_class_attendance%>%
+    dplyr::filter(`Student Email`== as.character(example_student)) %>%
+    dplyr::filter(Class == input$type)%>%
+
+    pull(`Excused Absence`)
+
 
   valueBox(
-    paste0(excusednum), "Excused Absence",
+    paste0(excused_data), "Excused Absence",
     color = "light-blue"
   )
 })
@@ -86,24 +53,14 @@ output$excused <- renderValueBox({
 ## Unexcused ValueBox
 
 output$unexcused <- renderValueBox({
-  if (input$type == "Lecture") {
-    unexcusednum <- pivot %>%
-      filter(email == as.character(example_student)) %>%
-      pull(`Unexcused absence`)
-  } else {
-    if (as.character(example_student) %in% tutpatn$email) {
-      unexcusednum <- tutpatn %>%
-        filter(email == as.character(example_student)) %>%
-        pull(`Unexcused absence`)
-    } else {
-      unexcusednum <- tutshern %>%
-        filter(email == as.character(example_student)) %>%
-        pull(`Unexcused absence`)
-    }
-  }
+  unexcused_data<- all_class_attendance%>%
+    dplyr::filter(`Student Email`== as.character(example_student)) %>%
+    dplyr::filter(Class == input$type)%>%
+    pull(`Unexcused Absence`)
+
 
   valueBox(
-    paste0(unexcusednum), "Unexcused Absence",
+    paste0(unexcused_data), "Unexcused Absence",
     color = "light-blue"
   )
 })
@@ -111,10 +68,10 @@ output$unexcused <- renderValueBox({
 ## Retrieval of Marks of Student User
 
 student_grade_show <- reactive({
-  grade_student <- grades_list %>%
-    filter(email == as.character(example_student)) %>%
-    pivot_longer(cols = `ASSESS 1`:PRESENTATION, names_to = "Assessment", values_to = "Marks") %>%
-    select(-email)
+  grade_student <- staff_student_grades%>%
+    dplyr::filter(`Student Email`== as.character(example_student)) %>%
+    pivot_longer(cols = c(!`Student Email`), names_to = "Assessment", values_to = "Marks") %>%
+    select(-`Student Email`)
   return(grade_student)
 })
 
@@ -136,20 +93,20 @@ output$student_user_grades <- DT::renderDataTable({
 output$histogram <- renderPlot({
   if (n_students > 15) {
     if (is.null(input$student_user_grades_rows_selected) == TRUE) {
-      assessment_type <- "ASSESS 1"
+      assessment_type <- colnames(staff_student_grades[2])
     } else {
       selected <- input$student_user_grades_rows_selected
       grade_table <- student_grade_show()
       grade_table$ID <- seq.int(nrow(grade_table))
       assessment_type <- grade_table %>%
-        filter(ID == selected) %>%
+        dplyr::filter(ID == selected) %>%
         pull(Assessment)
     }
     grade_table <- student_grade_show()
-    total_marks_assessment <- grades_list %>%
+    total_marks_assessment <- staff_student_grades %>%
       drop_na() %>%
-      pivot_longer(cols = `ASSESS 1`:PRESENTATION, names_to = "Assessment", values_to = "Marks") %>%
-      filter(Assessment == as.character(assessment_type))
+      pivot_longer(cols =  c(!`Student Email`) , names_to = "Assessment", values_to = "Marks") %>%
+      dplyr::filter(Assessment == as.character(assessment_type))
 
     max_count <- total_marks_assessment %>%
       group_by(Marks) %>%
@@ -161,19 +118,19 @@ output$histogram <- renderPlot({
       ggplot(aes(x = Marks)) +
       geom_histogram(fill = "#006DAE") +
       geom_vline(colour = "red", linetype = "dashed", xintercept = grade_table %>%
-                   filter(Assessment == as.character(assessment_type)) %>%
+                   dplyr::filter(Assessment == as.character(assessment_type)) %>%
                    pull(Marks)) +
       geom_text(
         mapping = aes(
           x = Marks,
           y = 1 + nrow(total_marks_assessment %>%
-                         filter(Marks == (grade_table %>%
-                                            filter(Assessment == as.character(assessment_type)) %>%
+                         dplyr::filter(Marks == (grade_table %>%
+                                            dplyr::filter(Assessment == as.character(assessment_type)) %>%
                                             pull(Marks)))),
           label = "Your score", angle = 90
         ), nudge_x = 0.03, hjust = 0,
         data = grade_table %>%
-          filter(Assessment == as.character(assessment_type))
+          dplyr::filter(Assessment == as.character(assessment_type))
       ) +
       theme_bw() +
       labs(
@@ -184,4 +141,5 @@ output$histogram <- renderPlot({
       ylim(0, 5 + max_count)
   }
 })
+
 

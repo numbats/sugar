@@ -52,7 +52,7 @@ first_tab <- tabItem(
         width = "40%",
         "type",
         "Select class",
-        c("Lecture", "Tutorial"),
+        c(unique(all_class_attendance$Class)),
         selected = NULL
       ),
       fluidRow(
@@ -119,7 +119,7 @@ staff_first_tab <- tabItem(
         width = "40%",
         "type",
         "Select class",
-        c("Lecture", "Tutorial A", "Tutorial B"),
+        c(unique(all_class_attendance$Class)) ,
         selected = NULL
       ),
       div(style="text-align: right;",downloadButton("downloadattendance", "Download Data")),
@@ -172,7 +172,7 @@ view_first_tab <- tabItem(
         width = "40%",
         "type",
         "Select class",
-        c("Lecture", "Tutorial"),
+        c(unique(all_class_attendance$Class)),
         selected = NULL
       ),
       fluidRow(
