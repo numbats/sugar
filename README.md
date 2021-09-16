@@ -17,3 +17,11 @@ Install the package from [GitHub](https://github.com/) with:
 # install.packages("devtools")
 devtools::install_github("numbats/sugar")
 ```
+
+# Package flow
+
+1.  Set up Google Cloud Platform credentials.  
+2.  create app skeleton
+3.  initialize auth
+4.  create googlesheets for the unit
+5.  Give unit specific inputs
