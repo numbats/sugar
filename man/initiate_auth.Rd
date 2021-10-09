@@ -4,10 +4,10 @@
 \alias{initiate_auth}
 \title{Initiate the authorization}
 \usage{
-initiate_auth(email)
+initiate_auth(setup_info)
 }
 \arguments{
-\item{email}{email id of the google sheet user}
+\item{setup_info}{app set up information}
 }
 \description{
 Function to set up googlesheets authorisation

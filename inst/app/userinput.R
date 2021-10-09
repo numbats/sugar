@@ -1,14 +1,15 @@
 # Provide Your Google Cloud Credentials
 
-options("googleAuthR.webapp.client_id" = "732529436396-d4hp01amt4npadrqr99bhk8e6fs6s2sp.apps.googleusercontent.com")
-options("googleAuthR.webapp.client_secret" = "wYIpi6-freVyRSjxm44Tw1m1")
+options("googleAuthR.webapp.client_id" = {{{client_id}}})
+options("googleAuthR.webapp.client_secret" ={{{client_secret}}})
 
 # DASHBOARD UI & SERVER
 
-header <- dashboardHeader(title = "ETCXXXX")
-sidebar <- dashboardSidebar(shinyjs::useShinyjs(), uiOutput("sidebarpanel"))
-body <- dashboardBody(shinyjs::useShinyjs(), uiOutput("body"))
-ui <- dashboardPage(header, sidebar, body, skin = "blue")
+
+header <- shinydashboard::dashboardHeader(title =deparse(quote({{unit_code}})))
+sidebar <- shinydashboard::dashboardSidebar(shinyjs::useShinyjs(), shiny::uiOutput("sidebarpanel"))
+body <- shinydashboard::dashboardBody(shinyjs::useShinyjs(), shiny::uiOutput("body"))
+ui <- shinydashboard::dashboardPage(header, sidebar, body, skin = "blue")
 
 
 # Access to Google Sheets
@@ -17,16 +18,27 @@ sheet <- tryCatch(
   {
     googlesheets4::gs4_auth(
       cache = ".secrets",
-      email="abab0012@student.monash.edu",
-      token = "authentication.rds"
+      email=deparse(quote({{maintainer}})),
+      token = readRDS("authentication.rds")
     )
-    attendance_sheets <- gs4_get(as.character(gs4_find(paste0("ETCXXX","Attendance"))$id))
-    grade_sheets <- gs4_find(paste0("ETCXXXX","Grade"))
-    authorization_sheets <- gs4_find(paste0("ETCXXXX","Access Authorization"))
+    attendance_sheets <- gs4_get(as.character(gs4_find(paste0(deparse(quote({{unit}})),"Attendance"))$id))
+    grade_sheets <- gs4_find(paste0(deparse(quote({{unit}})),"Grade"))
+    authorization_sheets <- gs4_find(paste0(deparse(quote({{unit}})),"Access Authorization"))
+
+    get_attendance_link<- gs4_find(paste0(deparse(quote({{unit}})),"Attendance"))
+    attendance_sheet_link <- get_attendance_link[[3]][[1]][["webViewLink"]]
+
+    get_grades_link<- gs4_find(paste0(deparse(quote({{unit}})),"Grade"))
+    grades_sheet_link <- get_grades_link[[3]][[1]][["webViewLink"]]
+
+
+
   },
   error = function(e) {
     message("Access has not been granted, please try again in 5 minutes.")
     return(NULL)
   }
 )
+
+
 

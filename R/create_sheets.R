@@ -1,9 +1,10 @@
 #' Create skeleton of Google Sheet for student
 #'
 #' Function to create a google sheets for storing information on Students.
-#' @param code The Unit Code
+#'
 #' @export
-create_student_sheet <- function(code) {
+create_student_sheet <- function() {
+  code=unitinfo$unit
   tbl_colnames <- c("Studentid", "Firstname", "Lastname", "Email", "Tutorialgroup")
   student_tibble <- tbl_colnames %>%
     rlang::rep_named(list(logical())) %>%
@@ -16,8 +17,8 @@ create_student_sheet <- function(code) {
 #' Function to create a google sheets for storing information on attendance of students.
 #' @param schedule A tibble with columns "Class","StartDate" and "EndDate" where "Class" depicts the type of class ie.Lecture A, Lecture B, Tutorial A, Tutorial B etc. "StartDate" and "EndDate" depicts the date of start and end of the class in the semester.
 #' @export
-create_attendance_sheet <- function(code, schedule) {
-
+create_attendance_sheet <- function(schedule) {
+  code=unitinfo$unit
   attendance <- googlesheets4::gs4_create(paste(code, "Attendance", sep = ""), sheets = unique(schedule$Class))
 
   for (i in 1:length(unique(schedule$Class))) {
@@ -40,8 +41,8 @@ create_attendance_sheet <- function(code, schedule) {
 #' Function to create a google sheets for storing information on Grade.
 #' @param assessment A tibble with columns "Assessment" that depicts the name of the assessment, "Weightage" depicts the weightage of the assessment and "Total Marks" is the total marks alloted for the assessment.
 #' @export
-create_grade_sheet <- function(code, assessment) {
-
+create_grade_sheet <- function(assessment) {
+  code=unitinfo$unit
   grades <- googlesheets4::gs4_create(paste(code, "Grade", sep = ""), sheets = c("Grades", "Assessment Information"))
    tbl_colnames <- c("Student Email", c(assessment$Assessment))
 
@@ -58,8 +59,8 @@ create_grade_sheet <- function(code, assessment) {
 #'
 #' Functions to create a google sheets for storing information on the faculty members authorized to access the web application.
 #' @export
-create_authorization_sheet <- function(code, assessment) {
-
+create_authorization_sheet <- function() {
+  code=unitinfo$unit
 
   tbl_colnames <- c("Faculty Email")
 

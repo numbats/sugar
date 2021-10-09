@@ -4,7 +4,7 @@
 \alias{create_grade_sheet}
 \title{Create skeleton of Google Sheet for Assessment Grades}
 \usage{
-create_grade_sheet(code, assessment)
+create_grade_sheet(assessment)
 }
 \arguments{
 \item{assessment}{A tibble with columns "Assessment" that depicts the name of the assessment, "Weightage" depicts the weightage of the assessment and "Total Marks" is the total marks alloted for the assessment.}

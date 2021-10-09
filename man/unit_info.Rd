@@ -15,7 +15,7 @@ unit_info(unit, name, semester, year, lecturer)
 
 \item{year}{Year}
 
-\item{lecturer}{character vector with names of lecturers}
+\item{lecturer}{character vector with name and email id of lecturers}
 }
 \value{
 a special class, monash unit with the unit information as a list
@@ -24,7 +24,10 @@ a special class, monash unit with the unit information as a list
 Function to recieve unit information
 }
 \examples{
-unit_info(unit = "ETC5521", name = "Exploratory Data Analysis",semester=1,year=2020,
-lecturer = c("Emi Tanaka" = "emi.tanaka@monash.edu",  "Di Cook" = "dicook@monash.edu"))
+unit_info(unit = "ETC5521",
+name = "Exploratory Data Analysis",
+semester=1,year=2020,lecturer =
+c("Emi Tanaka" = "emi.tanaka@monash.edu",
+"Di Cook" = "dicook@monash.edu"))
 
 }

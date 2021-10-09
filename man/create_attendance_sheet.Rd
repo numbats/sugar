@@ -4,7 +4,7 @@
 \alias{create_attendance_sheet}
 \title{Create skeleton of Google Sheet for Attendance}
 \usage{
-create_attendance_sheet(code, schedule)
+create_attendance_sheet(schedule)
 }
 \arguments{
 \item{schedule}{A tibble with columns "Class","StartDate" and "EndDate" where "Class" depicts the type of class ie.Lecture A, Lecture B, Tutorial A, Tutorial B etc. "StartDate" and "EndDate" depicts the date of start and end of the class in the semester.}

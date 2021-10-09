@@ -1,9 +1,9 @@
 #' Initiate the authorization
 #'
 #' Function to set up googlesheets authorisation
-#' @param email email id of the google sheet user
+#' @param setup_info app set up information
 #'@export
- initiate_auth <- function(email)
+ initiate_auth <- function(setup_info)
  {
 # designate project-specific cache
 options(gargle_oauth_cache = ".secrets")
@@ -23,10 +23,12 @@ googlesheets4::gs4_deauth()
 # sheets reauth with specified token and email address
 googlesheets4::gs4_auth(
   cache = ".secrets",
-  email = as.character(email),
+  email = as.character(setup_info$maintainer),
   scopes = "https://www.googleapis.com/auth/spreadsheets",
   token = "authentication.rds"
-)
-saveRDS(googlesheets4::gs4_auth(), here::here(("app/authentication.rds")))
 
+)
+
+saveRDS(googlesheets4::gs4_auth(), here::here("app/authentication.rds"))
 }
+
