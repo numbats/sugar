@@ -14,10 +14,10 @@
 #   filter(Class == input$type)
 
 
-output$present <- renderValueBox({
+output$lecturepresent <- renderValueBox({
  present_data<- all_class_attendance%>%
    filter(`Student Email` == as.character(userDetails())) %>%
-    filter(Class == input$type)%>%
+   filter(Class == input$type)%>%
       pull(Present)
 
 
@@ -30,7 +30,7 @@ output$present <- renderValueBox({
 
 ## Absent  ValueBox
 
-output$absent <- renderValueBox({
+output$lectureabsent <- renderValueBox({
   absent_data<- all_class_attendance%>%
     filter(`Student Email` == as.character(userDetails())) %>%
     filter(Class == input$type)%>%
@@ -45,12 +45,11 @@ output$absent <- renderValueBox({
 
 ## Excused ValueBox
 
-output$excused <- renderValueBox({
+output$lectureexcused <- renderValueBox({
   excused_data<- all_class_attendance%>%
     filter(`Student Email` == as.character(userDetails())) %>%
     filter(Class == input$type)%>%
-
-        pull(`Excused Absence`)
+    pull(`Excused Absence`)
 
 
   valueBox(
@@ -61,7 +60,7 @@ output$excused <- renderValueBox({
 
 ## Unexcused ValueBox
 
-output$unexcused <- renderValueBox({
+output$lectureunexcused <- renderValueBox({
   unexcused_data<- all_class_attendance%>%
     filter(`Student Email` == as.character(userDetails())) %>%
     filter(Class == input$type)%>%
@@ -73,6 +72,70 @@ output$unexcused <- renderValueBox({
     color = "light-blue"
   )
 })
+
+
+# Tutorial attendance
+
+output$tutorialpresent <- renderValueBox({
+  tpresent_data<- all_class_attendance%>%
+    filter(`Student Email` == as.character(userDetails())) %>%
+    filter(grepl('Tutorial|tutorial', Class))%>%
+    pull(Present)
+
+
+
+  valueBox(
+    paste0(tpresent_data), "Present",
+    color = "light-blue"
+  )
+})
+
+## Absent  ValueBox
+
+output$tutorialabsent <- renderValueBox({
+  tabsent_data<- all_class_attendance%>%
+    filter(`Student Email` == as.character(userDetails())) %>%
+    filter(grepl('Tutorial|tutorial', Class))%>%
+    pull(`Away for portion`)
+
+
+  valueBox(
+    paste0(tabsent_data), "Away From Portion",
+    color = "light-blue"
+  )
+})
+
+## Excused ValueBox
+
+output$tutorialexcused <- renderValueBox({
+  texcused_data<- all_class_attendance%>%
+    filter(`Student Email` == as.character(userDetails())) %>%
+    filter(grepl('Tutorial|tutorial', Class))%>%
+
+    pull(`Excused Absence`)
+
+
+  valueBox(
+    paste0(texcused_data), "Excused Absence",
+    color = "light-blue"
+  )
+})
+
+## Unexcused ValueBox
+
+output$tutorialunexcused <- renderValueBox({
+  tunexcused_data<- all_class_attendance%>%
+    filter(`Student Email` == as.character(userDetails())) %>%
+    filter(grepl('Tutorial|tutorial', Class))%>%
+    pull(`Unexcused Absence`)
+
+
+  valueBox(
+    paste0(tunexcused_data), "Unexcused Absence",
+    color = "light-blue"
+  )
+})
+
 
 ## Retrieval of Marks of Student User
 

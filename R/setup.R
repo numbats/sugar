@@ -27,4 +27,3 @@ setup_info <- function(unit=unitinfo$unit,unit_code=unitinfo$unit_code,name=unit
   setupinfo
 
 }
-

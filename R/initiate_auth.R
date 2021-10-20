@@ -24,11 +24,9 @@ googlesheets4::gs4_deauth()
 googlesheets4::gs4_auth(
   cache = ".secrets",
   email = as.character(setup_info$maintainer),
-  scopes = "https://www.googleapis.com/auth/spreadsheets",
-  token = "authentication.rds"
+  scopes = "https://www.googleapis.com/auth/spreadsheets"
 
 )
 
-saveRDS(googlesheets4::gs4_auth(), here::here("app/authentication.rds"))
 }
 

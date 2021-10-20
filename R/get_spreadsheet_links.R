@@ -5,7 +5,7 @@
 #'@export
 get_spreadsheet_links <- function(){
 
-  source("app/userinput.R")
+  source("app/googlesheets.R")
 
   spreadsheet_links <- c("Attendance"=attendance_sheet_link,"Grades"= grades_sheet_link)
   spreadsheet_links

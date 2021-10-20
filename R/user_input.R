@@ -11,5 +11,7 @@ user_input <- function(setup_info){
 
   template <- readLines("app/userinput.R")
   writeLines(whisker::whisker.render(template, setup_info), "app/userinput.R")
+  template <- readLines("app/googlesheets.R")
+  writeLines(whisker::whisker.render(template, setup_info), "app/googlesheets.R")
 
 }
