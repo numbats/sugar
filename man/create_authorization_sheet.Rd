@@ -4,7 +4,10 @@
 \alias{create_authorization_sheet}
 \title{Create skeleton of Google Sheet for Authorisation for web application access}
 \usage{
-create_authorization_sheet()
+create_authorization_sheet(unitinfo)
+}
+\arguments{
+\item{unitinfo}{unit information}
 }
 \description{
 Functions to create a google sheets for storing information on the faculty members authorized to access the web application.

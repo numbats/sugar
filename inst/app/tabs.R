@@ -181,21 +181,34 @@ view_first_tab <- tabItem(
       status = "primary", width = 12, solidHeader = TRUE,
       h3("Attendance", style = "text-align:center;color:black;"),
       br(),
-      selectInput(
-        width = "40%",
-        "type",
-        "Select class",
-        c(unique(all_class_attendance$Class)),
-        selected = NULL
-      ),
       fluidRow(
         br(),
-        column(10,offset=1,
-               fluidRow(
-                 valueBoxOutput("present", width = 3),
-                 valueBoxOutput("absent", width = 3),
-                 valueBoxOutput("excused", width = 3),
-                 valueBoxOutput("unexcused", width = 3)
+        column(10,
+               offset=1,
+               tabsetPanel(
+                 tabPanel("Lecture",
+                          br(),
+                          selectInput(
+                            width = "40%",
+                            "type",
+                            "Select class",
+                            c(unique(all_class_attendance%>%filter(grepl('lecture|Lecture', Class))%>%pull(Class))),
+                            selected = NULL
+                          ),br(),
+                          fluidRow(
+                            valueBoxOutput("lecturepresent", width = 3),
+                            valueBoxOutput("lectureabsent", width = 3),
+                            valueBoxOutput("lectureexcused", width = 3),
+                            valueBoxOutput("lectureunexcused", width = 3)
+                          )),
+                 tabPanel("Tutorial",
+                          br(),
+                          fluidRow(
+                            valueBoxOutput("tutorialpresent", width = 3),
+                            valueBoxOutput("tutorialabsent", width = 3),
+                            valueBoxOutput("tutorialexcused", width = 3),
+                            valueBoxOutput("tutorialunexcused", width = 3)
+                          ))
                )
         )
 

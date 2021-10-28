@@ -4,14 +4,7 @@
 \alias{setup_info}
 \title{Create app set up information}
 \usage{
-setup_info(
-  unit = unitinfo$unit,
-  unit_code = unitinfo$unit_code,
-  name = unitinfo$name,
-  maintainer,
-  client_id,
-  client_secret
-)
+setup_info(unitinfo, maintainer, client_id, client_secret)
 }
 \arguments{
 \item{maintainer}{email id of the maintainer of the application}

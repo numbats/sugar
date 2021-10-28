@@ -1,17 +1,6 @@
 # STUDENT TAB SERVER FUNCTIONS
 
-## Student Attendance Calender
 
-
-## Present ValueBox
-
-# student_individual_attendance <- all_class_attendance %>%
-#   filter(!is.na(`Student Email`))%>%
-#   filter(`Student Email`== as.character(userDetails()))
-
-# select_class_attendance <- all_class_attendance %>%
-#   filter(!is.na(`Student Email`)) %>%
-#   filter(Class == input$type)
 
 
 output$lecturepresent <- renderValueBox({

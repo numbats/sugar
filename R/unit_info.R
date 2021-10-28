@@ -19,15 +19,16 @@
 #' @export
 unit_info <- function(unit, name, semester,year, lecturer){
 
-  options(useFancyQuotes = FALSE)
+
 
    unitinfo <- list(unit = paste0(unit,"S",semester,year),
                     unit_code=as.character(unit),
-                    name = sQuote(as.character(name)),
+                    name = (as.character(name)),
                     lecturer=lecturer)
 
    class(unitinfo)<- "monash_unit"
-assign("unitinfo",unitinfo,envir = .GlobalEnv)
+   unitinfo
+#assign("unitinfo",unitinfo,envir = .GlobalEnv)
 
 
 }

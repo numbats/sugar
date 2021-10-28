@@ -4,7 +4,10 @@
 \alias{create_student_sheet}
 \title{Create skeleton of Google Sheet for student}
 \usage{
-create_student_sheet()
+create_student_sheet(unitinfo)
+}
+\arguments{
+\item{unitinfo}{unit information}
 }
 \description{
 Function to create a google sheets for storing information on Students.

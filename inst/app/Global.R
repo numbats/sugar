@@ -47,6 +47,13 @@ get_hd <- function() {
 
 # Retrieve google sheets
 
+# Student details
+
+student_details <- read_sheet(student_sheets)%>%
+  mutate(Name=paste(Firstname,Lastname,sep = " "))%>%
+  select(c(-Firstname,-Lastname))%>%
+  select(`Student Id`,Name,Email)
+
 # Lecture attendance
 
 attendance_sheets_name <- (attendance_sheets$sheets) %>% as_tibble()
@@ -99,7 +106,11 @@ for (i in 1:nrow(attendance_sheets_name))
 }
 all_class_attendance <- do.call("rbind", pivot_attendance_data)
 
-
+all_class_attendance<- all_class_attendance%>%
+  left_join(student_details,by=c("Student Email"="Email"))%>%
+  select(`Student Id`,Name,`Student Email`,
+         `Present`,`Away for portion`,
+         `Excused Absence`,`Unexcused Absence`,Class)
 
 
 # authorization list
@@ -116,12 +127,15 @@ assessment_info <- read_sheet(grade_sheets, sheet = 2)
 ## Grade
 grades_data <- read_sheet(grade_sheets, sheet = 1)
 
+
 n_students <- grades_data %>%
   filter(!is.na(`Student Email`)) %>%
   nrow()
 
 staff_student_grades <- grades_data %>%
   filter(!is.na(`Student Email`))
+
+
 
 staff_grades_prefinal <- staff_student_grades %>%
   pivot_longer(cols = c(!`Student Email`), values_to = "Obtained Marks", names_to = "Assessment") %>%
@@ -154,3 +168,6 @@ full_student_grades_list <- staff_student_grades_final %>%
 
 
 colnames(full_student_grades_list) <- gsub(".x", "", colnames(full_student_grades_list))
+
+full_student_grades_list<- student_details%>%
+  full_join(full_student_grades_list,by=c("Email"="Student Email"))
