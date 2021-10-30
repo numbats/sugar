@@ -1,16 +1,6 @@
 
 # google credentials & scopes
 
-#
-#
-# # set the scopes required
-# scopes <- c(
-#   "https://www.googleapis.com/auth/userinfo.email",
-#   "https://www.googleapis.com/auth/userinfo.profile"
-# )
-#
-# # set the client
-# gar_set_client(scopes = scopes, activate = "web")
 
 options(googleAuthR.scopes.selected = c(
   "https://www.googleapis.com/auth/userinfo.email",
@@ -22,7 +12,7 @@ options(googleAuthR.scopes.selected = c(
 
 get_email <- function() {
   f <- gar_api_generator(
-    # "https://www.googleapis.com/auth/userinfo.email",
+
     "https://openidconnect.googleapis.com/v1/userinfo",
     "POST",
     data_parse_function = function(x) x$email,
@@ -36,7 +26,7 @@ get_email <- function() {
 
 get_hd <- function() {
   f <- gar_api_generator(
-    # "https://www.googleapis.com/auth/userinfo.email",
+
     "https://openidconnect.googleapis.com/v1/userinfo",
     "POST",
     data_parse_function = function(x) x$hd,
@@ -113,7 +103,7 @@ all_class_attendance<- all_class_attendance%>%
          `Excused Absence`,`Unexcused Absence`,Class)
 
 
-# authorization list
+# authorization list to access the app
 
 auth_list <- read_sheet(authorization_sheets)
 

@@ -7,8 +7,9 @@
 create_grade_sheet(unitinfo, assessment)
 }
 \arguments{
-\item{unitinfo}{unit information
-@param assessment A tibble with columns "Assessment" that depicts the name of the assessment, "Weightage" depicts the weightage of the assessment and "Total Marks" is the total marks alloted for the assessment.}
+\item{unitinfo}{unit information}
+
+\item{assessment}{A tibble with columns "Assessment" that depicts the name of the assessment, "Weightage" depicts the weightage of the assessment and "Total Marks" is the total marks alloted for the assessment.}
 }
 \description{
 Function to create a google sheets for storing information on Grade.

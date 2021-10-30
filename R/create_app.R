@@ -8,5 +8,6 @@
    appDir <- system.file("app", package = "sugar")
    R.utils::copyDirectory(appDir,to=here::here("app"))
 
+#file.copy()
 
  }

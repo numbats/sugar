@@ -1,6 +1,6 @@
 # STUDENT TAB SERVER FUNCTIONS
 
-## Student Attendance Calender
+## Student Attendance
 
 example_student <- sample(unique(all_class_attendance$`Student Email`),1)
 

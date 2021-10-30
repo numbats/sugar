@@ -174,7 +174,6 @@ server <- function(input, output, session) {
 
       sidebarMenu(
         id="student_tabs",
-        # menuItem("Student", tabName = "student", icon = icon("fas fa-user")),
         br(),
         p("  Welcome ! "),
         p("Student Email ID"),
@@ -278,4 +277,4 @@ server <- function(input, output, session) {
 
 }
 shinyApp(ui=ui,server=server)
-#shinyApp(ui = ui, server = server)
+

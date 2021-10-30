@@ -42,7 +42,7 @@ create_attendance_sheet <- function(unitinfo,schedule) {
 #'
 #' Function to create a google sheets for storing information on Grade.
 #' @param unitinfo  unit information
-#'  @param assessment A tibble with columns "Assessment" that depicts the name of the assessment, "Weightage" depicts the weightage of the assessment and "Total Marks" is the total marks alloted for the assessment.
+#'@param assessment A tibble with columns "Assessment" that depicts the name of the assessment, "Weightage" depicts the weightage of the assessment and "Total Marks" is the total marks alloted for the assessment.
 #' @export
 create_grade_sheet <- function(unitinfo,assessment) {
   code=unitinfo$unit

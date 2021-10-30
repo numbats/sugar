@@ -7,6 +7,8 @@
 setup_info(unitinfo, maintainer, client_id, client_secret)
 }
 \arguments{
+\item{unitinfo}{unit information}
+
 \item{maintainer}{email id of the maintainer of the application}
 
 \item{client_id}{Google cloud platform client id}
@@ -18,8 +20,4 @@ a special class, app setup with the set up as a list
 }
 \description{
 Function to recieve unit information
-}
-\examples{
-setup_info(unit,maintainer=c("Aarathy Babu"="abab0012@student.monash.edu"))
-
 }

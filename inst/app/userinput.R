@@ -1,40 +1,41 @@
+
 # Provide Your Google Cloud Credentials
 
-options("googleAuthR.webapp.client_id" = "732529436396-d4hp01amt4npadrqr99bhk8e6fs6s2sp.apps.googleusercontent.com")
-options("googleAuthR.webapp.client_secret" ="wYIpi6-freVyRSjxm44Tw1m1")
+options("googleAuthR.webapp.client_id" = "{{client_id}}")
+options("googleAuthR.webapp.client_secret" ="{{client_secret}}")
 
 # DASHBOARD UI & SERVER
 
 
-header <- shinydashboard::dashboardHeader(title ='ETC5521')
+header <- shinydashboard::dashboardHeader(title ='{{unit_code}}')
 sidebar <- shinydashboard::dashboardSidebar(shinyjs::useShinyjs(), shiny::uiOutput("sidebarpanel"))
 body <- shinydashboard::dashboardBody(shinyjs::useShinyjs(), shiny::uiOutput("body"))
 ui <- shinydashboard::dashboardPage(header, sidebar, body, skin = "blue")
 
 
 # Access to Google Sheets
-# Provide your Email Address and Unit code to google sheets
+
 sheet <- tryCatch(
   {
     googlesheets4::gs4_auth(
       cache = ".secrets",
-      email='abab0012@student.monash.edu'
+      email='{{maintainer}}'
     )
-    attendance_sheets <- gs4_get(as.character(gs4_find(paste0('ETC5521S12020',"Attendance"))$id))
-    grade_sheets <- gs4_find(paste0('ETC5521S12020',"Grade"))
-    authorization_sheets <- gs4_find(paste0('ETC5521S12020',"Access Authorization"))
-    student_sheets <- gs4_find(paste0('ETC5521S12020',"Students"))
+    attendance_sheets <- gs4_get(as.character(gs4_find(paste0('{{unit}}',"Attendance"))$id))
+    grade_sheets <- gs4_find(paste0('{{unit}}',"Grade"))
+    authorization_sheets <- gs4_find(paste0('{{unit}}',"Access Authorization"))
+    student_sheets <- gs4_find(paste0('{{unit}}',"Students"))
 
-    get_attendance_link<- gs4_find(paste0('ETC5521S12020',"Attendance"))
+    get_attendance_link<- gs4_find(paste0('{{unit}}',"Attendance"))
     attendance_sheet_link <- get_attendance_link[[3]][[1]][["webViewLink"]]
 
-    get_grades_link<- gs4_find(paste0('ETC5521S12020',"Grade"))
+    get_grades_link<- gs4_find(paste0('{{unit}}',"Grade"))
     grades_sheet_link <- get_grades_link[[3]][[1]][["webViewLink"]]
 
-    get_authorization_link<- gs4_find(paste0('ETC5521S12020',"Access Authorization"))
+    get_authorization_link<- gs4_find(paste0('{{unit}}',"Access Authorization"))
     authorization_link <- get_authorization_link[[3]][[1]][["webViewLink"]]
 
-    get_students_link<- gs4_find(paste0('ETC5521S12020',"Students"))
+    get_students_link<- gs4_find(paste0('{{unit}}',"Students"))
     students_link <- get_students_link[[3]][[1]][["webViewLink"]]
 
 

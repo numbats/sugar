@@ -9,12 +9,6 @@
 #'
 #'@return a special class, monash unit with the unit information as a list
 #'
-#'@examples
-#'unit_info(unit = "ETC5521",
-#'name = "Exploratory Data Analysis",
-#'semester=1,year=2020,lecturer =
-#'c("Emi Tanaka" = "emi.tanaka@monash.edu",
-#'"Di Cook" = "dicook@monash.edu"))
 #'
 #' @export
 unit_info <- function(unit, name, semester,year, lecturer){
@@ -28,7 +22,7 @@ unit_info <- function(unit, name, semester,year, lecturer){
 
    class(unitinfo)<- "monash_unit"
    unitinfo
-#assign("unitinfo",unitinfo,envir = .GlobalEnv)
+
 
 
 }

@@ -18,4 +18,6 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Imports: 
     shiny,
-    tidyverse
+    tidyverse,
+    googlesheets4,
+    whisker
