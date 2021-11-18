@@ -74,7 +74,6 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-
 <div id="sugar" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#sugar" class="anchor"></a>sugar</h1></div>
@@ -88,25 +87,48 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"numbats/sugar"</span><span class="op">)</span></code></pre></div>
+<p>The R shiny application is accessible to both students and teaching staff to view the attendance and assessment grades of the students enrolled in a unit.</p>
+</div>
+<div id="student-view" class="section level2">
+<h2 class="hasAnchor">
+<a href="#student-view" class="anchor"></a>Student View</h2>
+<p>The student view consists of two tabs, Attendance and Grade.</p>
+<ul>
+<li>Attendance</li>
+</ul>
+<p><img src="reference/figures/student01.png"></p>
+<ul>
+<li>Grade</li>
+</ul>
+<p>The tab shows the marks scored by the student in each assessment and the corresponding performance of the class for that assessment, however the class performance is only shown to the students if the class strength is above 15 students.</p>
+<p><img src="reference/figures/student02.png"></p>
+</div>
+<div id="staff-view" class="section level2">
+<h2 class="hasAnchor">
+<a href="#staff-view" class="anchor"></a>Staff View</h2>
+<ul>
+<li>Attendance</li>
+</ul>
+<p>The attendance tab contains the attendance of the students enrolled in the unit which can be downloaded as a .CSV file.</p>
+<p><img src="reference/figures/Inkedstaff_page01.jpg"></p>
+<ul>
+<li>Grade</li>
+</ul>
+<p>The grade tab shows the grades of each student color coded according to the pass marks. Like attendance, grades of students can also be downloaded as a .CSV file.</p>
+<p><img src="reference/figures/Inkedstaff_page02.jpg"> The pass marks is calculated according the unit assessment information.</p>
+<p><img src="reference/figures/Inkedstaff03.jpg"></p>
+<ul>
+<li>View as Student</li>
+</ul>
+<p>The feature allows teaching staff to view the app from the student’s perspective.</p>
+</div>
+<div id="authorized-access" class="section level2">
+<h2 class="hasAnchor">
+<a href="#authorized-access" class="anchor"></a>Authorized Access</h2>
+<p>Only students enrolled in the unit and authorized staff can access the application.</p>
+<p><img src="reference/figures/unauthorized.png"></p>
 </div>
 </div>
-<div id="package-flow" class="section level1">
-<h1 class="hasAnchor">
-<a href="#package-flow" class="anchor"></a>Package flow</h1>
-<ol>
-<li>Set up Google Cloud Platform credentials and save the json.<br>
-</li>
-<li>create app skeleton</li>
-<li>set the unit info using unit_info()</li>
-<li>set the app setup info using setup_info()</li>
-<li>initialize auth</li>
-<li>create googlesheets for the unit</li>
-<li>pass the user specific input, setup_info in user_input()</li>
-<li>launch app</li>
-<li>Get google spreadsheet links using get_spreadsheets_link</li>
-</ol>
-</div>
-
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

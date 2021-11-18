@@ -18,7 +18,7 @@ unit_info(unit, name, semester, year, lecturer)
 \item{lecturer}{character vector with name and email id of lecturers}
 }
 \value{
-a special class, monash unit with the unit information as a list
+a special class, monash unit with the unit information
 }
 \description{
 Function to recieve unit information

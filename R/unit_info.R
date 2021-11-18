@@ -7,8 +7,7 @@
 #'@param year Year
 #'@param lecturer character vector with name and email id of lecturers
 #'
-#'@return a special class, monash unit with the unit information as a list
-#'
+#'@return a special class, monash unit with the unit information
 #'
 #' @export
 unit_info <- function(unit, name, semester,year, lecturer){

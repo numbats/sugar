@@ -10,6 +10,7 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  eval = FALSE,
   comment = "#>"
 )
 ```
@@ -79,43 +80,42 @@ initiate_auth(setup_info)
 
 - Add the unit timetable and assessment information 
 
-The information on the schedule and assessment should be in a dataframe as per the format below with the same column names and data types. 
+The information on the schedule and assessment should be in a dataframe as per the format below with the same column names and data types.
+
+  + Column names of schedule : "Class","StartDate","EndDate"
+  
+  + Column names of assessment : "Assessment","Weightage","Total Marks"
+
 
 
 ```{r, echo=TRUE,eval=FALSE}
 schedule <- readr::read_csv("schedule.csv")
 
+
 ```
 
 
-```{r schedule, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
-tabl <- " 
-| Class         | StartDate     | EndDate     |
-| <chr>         | <date>        | <date>      |
-|---------------|:-------------:|------------:|
-| Lecture A     | 2021-09-20    | 2021-12-10  |
-| Lecture B     | 2021-09-21    | 2021-12-11  |
-| Tutorial A    | 2021-09-22    | 2021-12-12  |
-| Tutorial B    | 2021-09-23    | 2021-12-13  |
-"
-cat(tabl)
+```{r schedule, echo=FALSE,eval=TRUE, message=FALSE, warnings=FALSE}
+data.frame("Class"=c("Lecture A","Lecture B", "Tutorial A"),
+       "StartDate"=c(as.Date("20-09-2021", format = "%d-%m-%Y"),
+                     as.Date("21-09-2021", format = "%d-%m-%Y"),
+                     as.Date("22-09-2021", format = "%d-%m-%Y")),
+       
+       "EndDate"=c(as.Date("10-12-2021", format = "%d-%m-%Y"),
+                     as.Date("11-12-2021", format = "%d-%m-%Y"),
+                     as.Date("12-12-2021", format = "%d-%m-%Y")))
 ```
 
 ```{r  echo=TRUE,eval=FALSE}
 assessment <- readr::read_csv("assessment.csv")
 ```
 
-```{r assessment, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
-tab2 <- " 
-| Assessment    | Weightage     | Total Marks  |
-| <chr>         | <dbl>         | <dbl>        |
-|---------------|:------------ :|------------: |
-| ASSESS 1      | 25            | 100          |
-| ASSESS 2      | 25            | 100          |
-| ASSESS 3      | 25            | 100          |
-| ASSESS 4      | 25            | 100          |
-"
-cat(tab2)
+```{r assessment,eval=TRUE, echo=FALSE, message=FALSE, warnings=FALSE}
+
+data.frame("Assessment"=c("ASSESS 1","ASSESS 2", "ASSESS 3","ASSESS 4"),
+       "Weightage"=25,
+       
+       "Total Marks"=100)
 ```
 
 - Create Google Sheets for the unit
@@ -171,3 +171,5 @@ get_spreadsheet_links()
 - Host the app on Monash EBS Shinyapps.io
 
 Contact Emi Tanaka to get the application maintainer's email added to use the Monash EBS shiny account.
+
+For the log out from the app to be smooth, the shinyapps.io link should be supplied in the `app.R` file at the end. Replace the link "https://ebsmonash.shinyapps.io/sugar-demo-app/" with the newly created one. 

@@ -16,7 +16,7 @@ setup_info(unitinfo, maintainer, client_id, client_secret)
 \item{client_secret}{Google cloud platform client secret}
 }
 \value{
-a special class, app setup with the set up as a list
+a special class, app_setup with the set up information
 }
 \description{
 Function to recieve unit information

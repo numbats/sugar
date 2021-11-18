@@ -7,7 +7,7 @@
 #'@param client_id Google cloud platform client id
 #'@param client_secret Google cloud platform client secret
 #'
-#'@return a special class, app setup with the set up as a list
+#'@return a special class, app_setup with the set up information
 #'
 #'
 #' @export

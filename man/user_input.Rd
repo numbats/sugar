@@ -9,9 +9,6 @@ user_input(setup_info)
 \arguments{
 \item{setup_info}{unit information of class monash_unit}
 }
-\value{
-a special class, monash unit with the unit information as a list
-}
 \description{
 Function to set up inputs that are specific to units. The function opens the userinput.R file inorder to take in inputs.
 }

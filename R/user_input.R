@@ -4,7 +4,6 @@
 #'
 #'@param setup_info unit information of class monash_unit
 #'
-#'@return a special class, monash unit with the unit information as a list
 #' @export
 
 user_input <- function(setup_info){
