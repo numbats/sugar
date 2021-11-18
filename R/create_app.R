@@ -1,6 +1,6 @@
 #' Create app skeleton
 #'
-#' Function to set up app skeleton.
+#' Function to set up R shiny app skeleton
 #'
 #' @export
  create_app_skeleton <- function(){

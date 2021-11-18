@@ -1,0 +1,173 @@
+---
+title: "Workflow of Sugar R Package"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Workflow of Sugar R Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(sugar)
+```
+
+The following workflow should be considered for the web application's smooth set up and operation. 
+
+# Package flow
+
+
+- Set up Google Cloud Platform credentials as mentioned in "How to set up Google Cloud Platform credentials". Set aside the Client ID and Client secret for the app. 
+
+- Create the app skeleton.
+
+
+```{r}
+create_app_skeleton()
+```
+
+An R Shiny app skeleton with the following structure is created. 
+
+```
+├── ETCXXXX.Rproj
+├── app
+│   ├── server
+│   │   ├── view_as_student.R
+│   │   ├── student_server.R
+│   │   └── staff_server.R
+│   ├── www
+│   │   ├── blc.png
+│   ├── userinput.R
+│   ├── tabs.R
+│   ├── app.R
+│   ├── Global.R
+│   └── googlesheets.R
+
+```
+- Set unit information 
+
+```{r}
+unit_details<- unit_info(unit = "ETC5521", 
+                         name = "Exploratory Data Analysis",
+                         semester=1,year=2020,
+                         lecturer = c("Emi Tanaka" = "emi.tanaka@monash.edu",
+                         "Di Cook" = "dicook@monash.edu"))
+```
+
+- Set the app setup info such as details on app maintainer, client id and secret. 
+
+```{r}
+
+ setup_info <- setup_info(unit_details,
+              client_id="xxxxxxx.apps.googleusercontent.com",
+              client_secret="xxxxxx-xxxxxx",
+              maintainer="xxxxx@.monash.edu")
+```
+
+- Initialize authentication for creating Google Sheets for storing information on students with their attendance and grades as well as authorized staff members. 
+
+```{r}
+initiate_auth(setup_info)
+```
+
+
+- Add the unit timetable and assessment information 
+
+The information on the schedule and assessment should be in a dataframe as per the format below with the same column names and data types. 
+
+
+```{r, echo=TRUE,eval=FALSE}
+schedule <- readr::read_csv("schedule.csv")
+
+```
+
+
+```{r schedule, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
+tabl <- " 
+| Class         | StartDate     | EndDate     |
+| <chr>         | <date>        | <date>      |
+|---------------|:-------------:|------------:|
+| Lecture A     | 2021-09-20    | 2021-12-10  |
+| Lecture B     | 2021-09-21    | 2021-12-11  |
+| Tutorial A    | 2021-09-22    | 2021-12-12  |
+| Tutorial B    | 2021-09-23    | 2021-12-13  |
+"
+cat(tabl)
+```
+
+```{r  echo=TRUE,eval=FALSE}
+assessment <- readr::read_csv("assessment.csv")
+```
+
+```{r assessment, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
+tab2 <- " 
+| Assessment    | Weightage     | Total Marks  |
+| <chr>         | <dbl>         | <dbl>        |
+|---------------|:------------ :|------------: |
+| ASSESS 1      | 25            | 100          |
+| ASSESS 2      | 25            | 100          |
+| ASSESS 3      | 25            | 100          |
+| ASSESS 4      | 25            | 100          |
+"
+cat(tab2)
+```
+
+- Create Google Sheets for the unit
+
+  + Attendance sheet : Google sheet for storing attendance of student.
+
+
+```{r}
+create_attendance_sheet(unit_details,schedule)
+```
+
+  + Grade sheet : Google sheet for storing attendance of student.
+  
+```{r}
+create_grade_sheet(unit_details,assessment)
+```
+
+  + Student sheet : Google sheet for storing information on student such as name and Email Id.
+
+```{r}
+create_student_sheet(unit_details)
+```
+
+  + Authorization sheet : Google sheet for storing name and monash email id of authorized staff members. Only authorized individuals can access the app. 
+  
+```{r}
+create_authorization_sheet(unit_details)
+```
+
+For ensuring uniqueness of the sheets,a unique id is created for the unit with its code, the semester period and the year. For example , `ETC5521S12020Attendance` denotes Attendance sheet for ETC5521 of Semester 1 of year 2020. For smooth functioning of the app, please ensure that the column names of the google sheets are unchanged. 
+
+
+- Set up the user specific input such as unit code, client id and secret for the app
+
+```{r}
+user_input(setup_info)
+```
+
+The function writes the user specific input onto the `userinput.R` file for the functioning of the app.
+
+- Launch the app
+
+```{r}
+launch_app()
+```
+
+You can get the google spreadsheet links using the code below if needed. 
+
+```{r}
+get_spreadsheet_links()
+```
+
+- Host the app on Monash EBS Shinyapps.io
+
+Contact Emi Tanaka to get the application maintainer's email added to use the Monash EBS shiny account.

@@ -15,9 +15,19 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
+Suggests: 
+    R.utils,
+    knitr, 
+    rmarkdown
 Imports: 
     shiny,
-    tidyverse,
+    dplyr,
+    rlang,
+    here,
+    gargle,
     googlesheets4,
     whisker
+VignetteBuilder: knitr
+Depends: 
+    R (>= 2.10)

@@ -7,9 +7,7 @@
 create_student_sheet <- function(unitinfo) {
   code=unitinfo$unit
   tbl_colnames <- c("Student Id", "Firstname", "Lastname", "Email")
-  Student <- tbl_colnames %>%
-    rlang::rep_named(list(logical())) %>%
-    tibble::as_tibble()
+  Student <- setNames(data.frame(matrix(ncol = length(tbl_colnames), nrow = 0)), tbl_colnames)
   students <- googlesheets4::gs4_create(paste(code, "Students", sep = ""), sheets = Student)
 }
 
@@ -21,7 +19,8 @@ create_student_sheet <- function(unitinfo) {
 #' @export
 create_attendance_sheet <- function(unitinfo,schedule) {
   code=unitinfo$unit
-  attendance <- googlesheets4::gs4_create(paste(code, "Attendance", sep = ""), sheets = unique(schedule$Class))
+  attendance <- googlesheets4::gs4_create(paste(code, "Attendance", sep = ""),
+                                          sheets = unique(schedule$Class))
 
   for (i in 1:length(unique(schedule$Class))) {
 
@@ -29,9 +28,7 @@ create_attendance_sheet <- function(unitinfo,schedule) {
                       as.character(seq((schedule$StartDate[i]),
                       schedule$EndDate[i], by = "week")))
 
-    attend <- tbl_colnames %>%
-      rlang::rep_named(list(logical())) %>%
-      tibble::as_tibble()
+    attend <- setNames(data.frame(matrix(ncol = length(tbl_colnames), nrow = 0)), tbl_colnames)
 
     attendance <- attendance %>%
       googlesheets4::sheet_write(data = attend, sheet = unique(schedule$Class)[i])
@@ -49,9 +46,7 @@ create_grade_sheet <- function(unitinfo,assessment) {
   grades <- googlesheets4::gs4_create(paste(code, "Grade", sep = ""), sheets = c("Grades", "Assessment Information"))
    tbl_colnames <- c("Student Email", c(assessment$Assessment))
 
-  grade_info <- tbl_colnames %>%
-    rlang::rep_named(list(logical())) %>%
-    tibble::as_tibble()
+  grade_info <- setNames(data.frame(matrix(ncol = length(tbl_colnames), nrow = 0)), tbl_colnames)
 
   grades <- grades %>%
     googlesheets4::sheet_write(data = grade_info, sheet = "Grades") %>%
@@ -69,9 +64,7 @@ create_authorization_sheet <- function(unitinfo) {
 
   tbl_colnames <- c("Faculty Email")
 
-  authorized_list <- tbl_colnames %>%
-    rlang::rep_named(list(logical())) %>%
-    tibble::as_tibble()
+  authorized_list <- setNames(data.frame(matrix(ncol = length(tbl_colnames), nrow = 0)), tbl_colnames)
   authorized <- googlesheets4::gs4_create(paste(code, "Access Authorization", sep = ""), sheets = authorized_list)
 
 }
