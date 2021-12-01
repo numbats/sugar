@@ -254,17 +254,6 @@ server <- function(input, output, session) {
 
   # Provide your shinyapp.io link
 
-  # LOG OUT SERVER FUNCTION
-
-  observe({
-    shinyjs::onclick(
-      "gauth_login-googleAuthUi",
-      shinyjs::runjs("window.location.href = 'https://ebsmonash.shinyapps.io/sugar-demo-app/';")
-    )
-  })
-
-
-
 
   # UNAUTHORIZED ACCESS
 

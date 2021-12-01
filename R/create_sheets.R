@@ -6,8 +6,9 @@
 #' @export
 create_student_sheet <- function(unitinfo) {
   code=unitinfo$unit
+  code="2"
   tbl_colnames <- c("Student Id", "Firstname", "Lastname", "Email")
-  Student <- setNames(data.frame(matrix(ncol = length(tbl_colnames), nrow = 0)), tbl_colnames)
+ Student<-   setNames(data.frame(matrix(ncol = length(tbl_colnames), nrow = 0)), tbl_colnames)
   students <- googlesheets4::gs4_create(paste(code, "Students", sep = ""), sheets = Student)
 }
 

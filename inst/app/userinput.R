@@ -15,12 +15,15 @@ ui <- shinydashboard::dashboardPage(header, sidebar, body, skin = "blue")
 
 # Access to Google Sheets
 
-sheet <- tryCatch(
-  {
-    googlesheets4::gs4_auth(
-      cache = ".secrets",
-      email='{{maintainer}}'
-    )
+gs4_auth(cache = ".secrets")
+
+
+options(
+  gargle_oauth_cache = ".secrets",
+  gargle_oauth_email = "{{maintainer}}"
+)
+
+
     attendance_sheets <- gs4_get(as.character(gs4_find(paste0('{{unit}}',"Attendance"))$id))
     grade_sheets <- gs4_find(paste0('{{unit}}',"Grade"))
     authorization_sheets <- gs4_find(paste0('{{unit}}',"Access Authorization"))
@@ -37,15 +40,5 @@ sheet <- tryCatch(
 
     get_students_link<- gs4_find(paste0('{{unit}}',"Students"))
     students_link <- get_students_link[[3]][[1]][["webViewLink"]]
-
-
-
-  },
-  error = function(e) {
-    message("Access has not been granted, please try again in 5 minutes.")
-    return(NULL)
-  }
-)
-
 
 

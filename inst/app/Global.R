@@ -39,10 +39,10 @@ get_hd <- function() {
 
 # Student details
 
-student_details <- read_sheet(student_sheets)%>%
-  mutate(Name=paste(Firstname,Lastname,sep = " "))%>%
-  select(c(-Firstname,-Lastname))%>%
-  select(`Student Id`,Name,Email)
+student_details <- read_sheet(student_sheets) %>%
+  mutate(Name = paste(Firstname, Lastname, sep = " ")) %>%
+  select(c(-Firstname, -Lastname)) %>%
+  select(`Student Id`, Name, Email)
 
 # Lecture attendance
 
@@ -96,11 +96,13 @@ for (i in 1:nrow(attendance_sheets_name))
 }
 all_class_attendance <- do.call("rbind", pivot_attendance_data)
 
-all_class_attendance<- all_class_attendance%>%
-  left_join(student_details,by=c("Student Email"="Email"))%>%
-  select(`Student Id`,Name,`Student Email`,
-         `Present`,`Away for portion`,
-         `Excused Absence`,`Unexcused Absence`,Class)
+all_class_attendance <- all_class_attendance %>%
+  left_join(student_details, by = c("Student Email" = "Email")) %>%
+  select(
+    `Student Id`, Name, `Student Email`,
+    `Present`, `Away for portion`,
+    `Excused Absence`, `Unexcused Absence`, Class
+  )
 
 
 # authorization list to access the app
@@ -125,33 +127,38 @@ n_students <- grades_data %>%
 staff_student_grades <- grades_data %>%
   filter(!is.na(`Student Email`))
 
-
+# Obtained percentage Calculation
 
 staff_grades_prefinal <- staff_student_grades %>%
   pivot_longer(cols = c(!`Student Email`), values_to = "Obtained Marks", names_to = "Assessment") %>%
   left_join(assessment_info, by = "Assessment") %>%
   mutate(
-    Obtained_Percentage = (`Obtained Marks` / `Total Marks`) * Weightage,
-    Percentage = (`Obtained Marks` / `Total Marks`) * 100
+    weighted_percentage = (`Obtained Marks` / `Total Marks`) * Weightage,
+    obtained_percentage = (`Obtained Marks` / `Total Marks`) * 100
   ) %>%
-  select(`Student Email`, Assessment, `Obtained Marks`, Percentage, Obtained_Percentage)
+  select(`Student Email`, Assessment, `Obtained Marks`, obtained_percentage, weighted_percentage)
 
+# Total percentage
 staff_student_grades_final <- staff_grades_prefinal %>%
   group_by(`Student Email`) %>%
-  mutate(Total = sum(Obtained_Percentage)) %>%
+  mutate(Total = sum(weighted_percentage)) %>%
   select(`Student Email`, Assessment, `Obtained Marks`, Total) %>%
   pivot_wider(`Student Email`:Total, names_from = "Assessment", values_from = `Obtained Marks`) %>%
   rename(`Total Marks Obtained` = "Total") %>%
   ungroup()
 
+# To colour according to the pass marks(>49%), the total marks of each assessment should be taken into consideration.
+# "Obt percent" has the values of obtained percentage under every assessment.
 
 obt_percent <- staff_grades_prefinal %>%
-  select(-c(`Obtained Marks`, Obtained_Percentage)) %>%
-  pivot_wider(`Student Email`:Percentage,
+  select(-c(`Obtained Marks`, weighted_percentage)) %>%
+  pivot_wider(`Student Email`:obtained_percentage,
     names_from = "Assessment",
-    values_from = "Percentage"
+    values_from = "obtained_percentage"
   )
 
+# Obt_percent is then joined with the staff_student_grades_final which has the obtained marks.
+# If the obtained percentage is higher than 49% then the obtained marks should be coloured. This is done in the staff_server.R through formattable().
 
 full_student_grades_list <- staff_student_grades_final %>%
   left_join(obt_percent, by = "Student Email")
@@ -159,5 +166,5 @@ full_student_grades_list <- staff_student_grades_final %>%
 
 colnames(full_student_grades_list) <- gsub(".x", "", colnames(full_student_grades_list))
 
-full_student_grades_list<- student_details%>%
-  full_join(full_student_grades_list,by=c("Email"="Student Email"))
+full_student_grades_list <- student_details %>%
+  full_join(full_student_grades_list, by = c("Email" = "Student Email"))
