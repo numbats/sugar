@@ -91,10 +91,14 @@
 <div id="package-flow" class="section level1">
 <h1 class="hasAnchor">
 <a href="#package-flow" class="anchor"></a>Package flow</h1>
-<ul>
-<li><p>Set up Google Cloud Platform credentials as mentioned in “How to set up Google Cloud Platform credentials”. Set aside the Client ID and Client secret for the app.</p></li>
-<li><p>Create the app skeleton.</p></li>
-</ul>
+<div id="set-up-google-cloud-platform-credentials" class="section level3">
+<h3 class="hasAnchor">
+<a href="#set-up-google-cloud-platform-credentials" class="anchor"></a>Set up Google Cloud Platform credentials</h3>
+<p>Set the Google Cloud Platform credentials as mentioned in “How to set up Google Cloud Platform credentials”. Set aside the Client ID and Client secret for the app.</p>
+</div>
+<div id="create-the-app-skeleton" class="section level3">
+<h3 class="hasAnchor">
+<a href="#create-the-app-skeleton" class="anchor"></a>Create the app skeleton</h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/create_app_skeleton.html">create_app_skeleton</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>An R Shiny app skeleton with the following structure is created.</p>
@@ -112,44 +116,42 @@
 │   ├── Global.R
 │   └── googlesheets.R
 </code></pre>
-<ul>
-<li>Set unit information</li>
-</ul>
+</div>
+<div id="set-unit-information" class="section level3">
+<h3 class="hasAnchor">
+<a href="#set-unit-information" class="anchor"></a>Set unit information</h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">unit_details</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/unit_info.html">unit_info</a></span><span class="op">(</span>unit <span class="op">=</span> <span class="st">"ETC5521"</span>, 
                          name <span class="op">=</span> <span class="st">"Exploratory Data Analysis"</span>,
                          semester<span class="op">=</span><span class="fl">1</span>,year<span class="op">=</span><span class="fl">2020</span>,
                          lecturer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Emi Tanaka"</span> <span class="op">=</span> <span class="st">"emi.tanaka@monash.edu"</span>,
                          <span class="st">"Di Cook"</span> <span class="op">=</span> <span class="st">"dicook@monash.edu"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<ul>
-<li>Set the app setup info such as details on app maintainer, client id and secret.</li>
-</ul>
+</div>
+<div id="set-the-app-setup-info-such-as-details-on-app-maintainer-client-id-and-secret" class="section level3">
+<h3 class="hasAnchor">
+<a href="#set-the-app-setup-info-such-as-details-on-app-maintainer-client-id-and-secret" class="anchor"></a>Set the app setup info such as details on app maintainer, client id and secret</h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
  <span class="va">setup_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/setup_info.html">setup_info</a></span><span class="op">(</span><span class="va">unit_details</span>,
               client_id<span class="op">=</span><span class="st">"xxxxxxx.apps.googleusercontent.com"</span>,
               client_secret<span class="op">=</span><span class="st">"xxxxxx-xxxxxx"</span>,
               maintainer<span class="op">=</span><span class="st">"xxxxx@.monash.edu"</span><span class="op">)</span></code></pre></div>
-<ul>
-<li>Initialize authentication for creating Google Sheets for storing information on students with their attendance and grades as well as authorized staff members.</li>
-</ul>
+</div>
+<div id="initialize-authentication-for-creating-google-sheets" class="section level3">
+<h3 class="hasAnchor">
+<a href="#initialize-authentication-for-creating-google-sheets" class="anchor"></a>Initialize authentication for creating Google Sheets</h3>
+<p>Initialize the authentication for creating Google sheets for storing information on students with their attendance and grades as well as authorized staff members</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/initiate_auth.html">initiate_auth</a></span><span class="op">(</span><span class="va">setup_info</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="add-the-classes-and-assessment-information" class="section level3">
+<h3 class="hasAnchor">
+<a href="#add-the-classes-and-assessment-information" class="anchor"></a>Add the classes and assessment information</h3>
+<p>The information on the assessment should be in a dataframe as per the format below with the same column names and data types.</p>
 <ul>
-<li>Add the unit timetable and assessment information</li>
-</ul>
-<p>The information on the schedule and assessment should be in a dataframe as per the format below with the same column names and data types.</p>
-<ul>
-<li><p>Column names of schedule : “Class”,“StartDate”,“EndDate”</p></li>
-<li><p>Column names of assessment : “Assessment”,“Weightage”,“Total Marks”</p></li>
+<li>Column names of assessment : “Assessment”,“Weightage”,“Total Marks”</li>
 </ul>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">schedule</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="st">"schedule.csv"</span><span class="op">)</span></code></pre></div>
-<pre><code>#&gt;        Class  StartDate    EndDate
-#&gt; 1  Lecture A 2021-09-20 2021-12-10
-#&gt; 2  Lecture B 2021-09-21 2021-12-11
-#&gt; 3 Tutorial A 2021-09-22 2021-12-12</code></pre>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">assessment</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="st">"assessment.csv"</span><span class="op">)</span></code></pre></div>
 <pre><code>#&gt;   Assessment Weightage Total.Marks
 #&gt; 1   ASSESS 1        25         100
@@ -157,50 +159,62 @@
 #&gt; 3   ASSESS 3        25         100
 #&gt; 4   ASSESS 4        25         100</code></pre>
 <ul>
-<li>
-<p>Create Google Sheets for the unit</p>
-<ul>
-<li>Attendance sheet : Google sheet for storing attendance of student.</li>
+<li>The schedule should be given in the format of a character vector with the unique names of the classes such as “Lecture A”, “Lecture B”, “Tutorial A” and so on.</li>
 </ul>
-</li>
-</ul>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<pre><code>#&gt; [1] "Lecture A"  "Lecture B"  "Tutorial A" "Tutorial B"</code></pre>
+</div>
+<div id="create-google-sheets-for-the-unit" class="section level3">
+<h3 class="hasAnchor">
+<a href="#create-google-sheets-for-the-unit" class="anchor"></a>Create Google Sheets for the unit</h3>
+<div id="attendance-sheet-google-sheet-for-storing-attendance-of-student" class="section level5">
+<h5 class="hasAnchor">
+<a href="#attendance-sheet-google-sheet-for-storing-attendance-of-student" class="anchor"></a>Attendance sheet : Google sheet for storing attendance of student</h5>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/create_attendance_sheet.html">create_attendance_sheet</a></span><span class="op">(</span><span class="va">unit_details</span>,<span class="va">schedule</span><span class="op">)</span></code></pre></div>
-<ul>
-<li>Grade sheet : Google sheet for storing attendance of student.</li>
-</ul>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<p>The created google sheet would contain the separate sheets for the classes mentioned. The dates should be entered horizontally as per the schedule of each classes.</p>
+</div>
+<div id="grade-sheet-google-sheet-for-storing-attendance-of-student" class="section level5">
+<h5 class="hasAnchor">
+<a href="#grade-sheet-google-sheet-for-storing-attendance-of-student" class="anchor"></a>Grade sheet : Google sheet for storing attendance of student</h5>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/create_grade_sheet.html">create_grade_sheet</a></span><span class="op">(</span><span class="va">unit_details</span>,<span class="va">assessment</span><span class="op">)</span></code></pre></div>
-<ul>
-<li>Student sheet : Google sheet for storing information on student such as name and Email Id.</li>
-</ul>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+</div>
+<div id="student-sheet-google-sheet-for-storing-information-on-student-such-as-name-and-email-id" class="section level5">
+<h5 class="hasAnchor">
+<a href="#student-sheet-google-sheet-for-storing-information-on-student-such-as-name-and-email-id" class="anchor"></a>Student sheet : Google sheet for storing information on student such as name and Email Id</h5>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/create_student_sheet.html">create_student_sheet</a></span><span class="op">(</span><span class="va">unit_details</span><span class="op">)</span></code></pre></div>
-<ul>
-<li>Authorization sheet : Google sheet for storing name and monash email id of authorized staff members. Only authorized individuals can access the app.</li>
-</ul>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+</div>
+<div id="authorization-sheet-google-sheet-for-storing-name-and-monash-email-id-of-authorized-staff-members--only-authorized-individuals-can-access-the-app" class="section level5">
+<h5 class="hasAnchor">
+<a href="#authorization-sheet-google-sheet-for-storing-name-and-monash-email-id-of-authorized-staff-members--only-authorized-individuals-can-access-the-app" class="anchor"></a>Authorization sheet : Google sheet for storing name and monash email id of authorized staff members. Only authorized individuals can access the app</h5>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/create_authorization_sheet.html">create_authorization_sheet</a></span><span class="op">(</span><span class="va">unit_details</span><span class="op">)</span></code></pre></div>
 <p>For ensuring uniqueness of the sheets,a unique id is created for the unit with its code, the semester period and the year. For example , <code>ETC5521S12020Attendance</code> denotes Attendance sheet for ETC5521 of Semester 1 of year 2020. For smooth functioning of the app, please ensure that the column names of the google sheets are unchanged.</p>
-<ul>
-<li>Set up the user specific input such as unit code, client id and secret for the app</li>
-</ul>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+</div>
+</div>
+<div id="set-up-the-user-specific-input-such-as-unit-code-client-id-and-secret-for-the-app" class="section level3">
+<h3 class="hasAnchor">
+<a href="#set-up-the-user-specific-input-such-as-unit-code-client-id-and-secret-for-the-app" class="anchor"></a>Set up the user specific input such as unit code, client id and secret for the app</h3>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/user_input.html">user_input</a></span><span class="op">(</span><span class="va">setup_info</span><span class="op">)</span></code></pre></div>
 <p>The function writes the user specific input onto the <code>userinput.R</code> file for the functioning of the app.</p>
-<ul>
-<li>Launch the app</li>
-</ul>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+</div>
+<div id="launch-the-app" class="section level3">
+<h3 class="hasAnchor">
+<a href="#launch-the-app" class="anchor"></a>Launch the app</h3>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/launch_app.html">launch_app</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>You can get the google spreadsheet links using the code below if needed.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/get_spreadsheet_links.html">get_spreadsheet_links</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<ul>
-<li>Host the app on Monash EBS Shinyapps.io</li>
-</ul>
+</div>
+<div id="host-the-app-on-monash-ebs-shinyapps-io" class="section level3">
+<h3 class="hasAnchor">
+<a href="#host-the-app-on-monash-ebs-shinyapps-io" class="anchor"></a>Host the app on Monash EBS Shinyapps.io</h3>
 <p>Contact Emi Tanaka to get the application maintainer’s email added to use the Monash EBS shiny account.</p>
 <p>For the log out from the app to be smooth, the shinyapps.io link should be supplied in the <code>app.R</code> file at the end. Replace the link “<a href="https://ebsmonash.shinyapps.io/sugar-demo-app/" class="uri">https://ebsmonash.shinyapps.io/sugar-demo-app/</a>” with the newly created one.</p>
+</div>
 </div>
   </div>
 

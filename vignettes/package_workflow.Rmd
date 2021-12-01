@@ -1,6 +1,8 @@
 ---
 title: "Workflow of Sugar R Package"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
   %\VignetteIndexEntry{Workflow of Sugar R Package}
   %\VignetteEngine{knitr::rmarkdown}
@@ -24,9 +26,12 @@ The following workflow should be considered for the web application's smooth set
 # Package flow
 
 
-- Set up Google Cloud Platform credentials as mentioned in "How to set up Google Cloud Platform credentials". Set aside the Client ID and Client secret for the app. 
+###  Set up Google Cloud Platform credentials
 
-- Create the app skeleton.
+Set the Google Cloud Platform credentials as mentioned in "How to set up Google Cloud Platform credentials". Set aside the Client ID and Client secret for the app. 
+
+
+###  Create the app skeleton
 
 
 ```{r}
@@ -51,7 +56,7 @@ An R Shiny app skeleton with the following structure is created.
 │   └── googlesheets.R
 
 ```
-- Set unit information 
+###  Set unit information 
 
 ```{r}
 unit_details<- unit_info(unit = "ETC5521", 
@@ -61,7 +66,7 @@ unit_details<- unit_info(unit = "ETC5521",
                          "Di Cook" = "dicook@monash.edu"))
 ```
 
-- Set the app setup info such as details on app maintainer, client id and secret. 
+###  Set the app setup info such as details on app maintainer, client id and secret
 
 ```{r}
 
@@ -71,41 +76,21 @@ unit_details<- unit_info(unit = "ETC5521",
               maintainer="xxxxx@.monash.edu")
 ```
 
-- Initialize authentication for creating Google Sheets for storing information on students with their attendance and grades as well as authorized staff members. 
+### Initialize authentication for creating Google Sheets 
+
+Initialize the authentication for creating Google sheets for storing information on students with their attendance and grades as well as authorized staff members 
 
 ```{r}
 initiate_auth(setup_info)
 ```
 
 
-- Add the unit timetable and assessment information 
+### Add the classes and assessment information 
 
-The information on the schedule and assessment should be in a dataframe as per the format below with the same column names and data types.
+The information on the assessment should be in a dataframe as per the format below with the same column names and data types.
 
-  + Column names of schedule : "Class","StartDate","EndDate"
-  
   + Column names of assessment : "Assessment","Weightage","Total Marks"
-
-
-
-```{r, echo=TRUE,eval=FALSE}
-schedule <- readr::read_csv("schedule.csv")
-
-
-```
-
-
-```{r schedule, echo=FALSE,eval=TRUE, message=FALSE, warnings=FALSE}
-data.frame("Class"=c("Lecture A","Lecture B", "Tutorial A"),
-       "StartDate"=c(as.Date("20-09-2021", format = "%d-%m-%Y"),
-                     as.Date("21-09-2021", format = "%d-%m-%Y"),
-                     as.Date("22-09-2021", format = "%d-%m-%Y")),
-       
-       "EndDate"=c(as.Date("10-12-2021", format = "%d-%m-%Y"),
-                     as.Date("11-12-2021", format = "%d-%m-%Y"),
-                     as.Date("12-12-2021", format = "%d-%m-%Y")))
-```
-
+  
 ```{r  echo=TRUE,eval=FALSE}
 assessment <- readr::read_csv("assessment.csv")
 ```
@@ -117,29 +102,41 @@ data.frame("Assessment"=c("ASSESS 1","ASSESS 2", "ASSESS 3","ASSESS 4"),
        
        "Total Marks"=100)
 ```
-
-- Create Google Sheets for the unit
-
-  + Attendance sheet : Google sheet for storing attendance of student.
+  
+  + The schedule should be given in the format of a character vector with the unique names of the classes such as "Lecture A", "Lecture B", "Tutorial A" and so on. 
 
 
+```{r schedule, echo=FALSE,eval=TRUE, message=FALSE, warnings=FALSE}
+schedule <- c("Lecture A","Lecture B","Tutorial A","Tutorial B")
+schedule
+```
+
+
+
+###  Create Google Sheets for the unit
+
+##### Attendance sheet : Google sheet for storing attendance of student
+
+ 
 ```{r}
 create_attendance_sheet(unit_details,schedule)
 ```
 
-  + Grade sheet : Google sheet for storing attendance of student.
+The created google sheet would contain the separate sheets for the classes mentioned. The dates should be entered horizontally as per the schedule of each classes.
+
+##### Grade sheet : Google sheet for storing attendance of student
   
 ```{r}
 create_grade_sheet(unit_details,assessment)
 ```
 
-  + Student sheet : Google sheet for storing information on student such as name and Email Id.
+##### Student sheet : Google sheet for storing information on student such as name and Email Id
 
 ```{r}
 create_student_sheet(unit_details)
 ```
 
-  + Authorization sheet : Google sheet for storing name and monash email id of authorized staff members. Only authorized individuals can access the app. 
+##### Authorization sheet : Google sheet for storing name and monash email id of authorized staff members. Only authorized individuals can access the app
   
 ```{r}
 create_authorization_sheet(unit_details)
@@ -148,7 +145,7 @@ create_authorization_sheet(unit_details)
 For ensuring uniqueness of the sheets,a unique id is created for the unit with its code, the semester period and the year. For example , `ETC5521S12020Attendance` denotes Attendance sheet for ETC5521 of Semester 1 of year 2020. For smooth functioning of the app, please ensure that the column names of the google sheets are unchanged. 
 
 
-- Set up the user specific input such as unit code, client id and secret for the app
+### Set up the user specific input such as unit code, client id and secret for the app
 
 ```{r}
 user_input(setup_info)
@@ -156,7 +153,7 @@ user_input(setup_info)
 
 The function writes the user specific input onto the `userinput.R` file for the functioning of the app.
 
-- Launch the app
+### Launch the app
 
 ```{r}
 launch_app()
@@ -168,7 +165,7 @@ You can get the google spreadsheet links using the code below if needed.
 get_spreadsheet_links()
 ```
 
-- Host the app on Monash EBS Shinyapps.io
+###  Host the app on Monash EBS Shinyapps.io
 
 Contact Emi Tanaka to get the application maintainer's email added to use the Monash EBS shiny account.
 
