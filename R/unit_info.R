@@ -14,6 +14,7 @@ unit_info <- function(unit, name, semester,year, lecturer){
 
 
 
+
    unitinfo <- list(unit = paste0(unit,"S",semester,year),
                     unit_code=as.character(unit),
                     name = (as.character(name)),
